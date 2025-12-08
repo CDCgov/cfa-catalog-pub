@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "cfa.catalog.public"
 version = "2025.10.06.0"
@@ -23,7 +27,8 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["cfa.catalog*"]
+namespaces = true
+include = ["cfa*"]
 
 [project.optional-dependencies]
 dev = [
@@ -34,6 +39,7 @@ dev = [
 
 [project.scripts]
 stf_nssp_gold_copy = "cfa.catalog.public.workflows.etl.stf.nssp_gold:copy_missing_files"
+stf_hsn_hrd_etl = "cfa.catalog.public.workflows.etl.stf.nhsn_hrd:etl"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules -vv --cov=cfa --cov-report html --cov-report term"
