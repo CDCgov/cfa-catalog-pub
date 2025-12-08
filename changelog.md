@@ -8,6 +8,12 @@ The versioning pattern is `YYYY.MM.DD.micro
 
 ---
 
+# [2025.12.08.0]
+
+## Added
+
+- `public.stf.nhsn_hrd` dataset and corresponding etl workflow
+
 # [2025.10.06.0]
 
 ## Added
