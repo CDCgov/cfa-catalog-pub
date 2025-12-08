@@ -22,7 +22,8 @@ type = "etl"
 # which is common for CDC data sources.
 
 domain = "data.cdc.gov"
-id = "mpgq-jmmr"
+id = "ua7e-t2fy"
+id_pre = "mpgq-jmmr"
 limit = 10000
 
 ############################################################################
