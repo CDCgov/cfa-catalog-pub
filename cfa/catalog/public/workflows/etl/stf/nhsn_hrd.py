@@ -1,10 +1,13 @@
 import argparse
 import json
 import os
-from io import BytesIO
+import re
+from io import BytesIO, StringIO
 from typing import Optional
 
 import polars as pl
+import requests
+from github import Github
 
 from cfa.dataops import datacat
 from cfa.dataops.soda import Query
@@ -12,6 +15,44 @@ from cfa.dataops.soda import Query
 dataset = datacat.public.stf.nhsn_hrd
 
 access_token = os.getenv("CDC_SODA_API_TOKEN")
+
+
+def etl_archive():
+    """
+    For fetching the archived versions of the NHSN HRD data from GitHub user repo. this will not need to be run after
+    etl workflow below is automated for CFA.
+    """
+    g = Github()
+    repo = g.get_repo(dataset.config["source"]["archive"]["repo"])
+    contents = repo.get_contents(dataset.config["source"]["archive"]["path"])
+    current_extracted_versions = dataset.extract.get_versions()
+    for file in contents:
+        version_match = re.search(
+            r"nhsn_(\d{4}\-\d{2}\-\d{2})\.csv", file.name
+        )
+        if version_match:
+            version_date = version_match.group(1) + "T00-00-00"
+            if version_date not in current_extracted_versions:
+                print(f"Downloading and loading {file.name} from archive...")
+                # Extract file from GitHub if isn't already cached
+                r = requests.get(file.download_url)
+                data = r.text
+                dataset.extract.write_blob(
+                    file_buffer=bytes(data, "utf-8"),
+                    path_after_prefix=f"{version_date}/{file.name}",
+                    auto_version=False,
+                )
+                # Transform the data
+                df_t = transform(pl.read_csv(StringIO(data)))
+                # Load the transformed data
+                buffer = BytesIO()
+                df_t.write_parquet(buffer)
+                dataset.load.write_blob(
+                    file_buffer=buffer.getvalue(),
+                    path_after_prefix=f"{version_date}/data.parquet",
+                    auto_version=False,
+                )
+                buffer.close()
 
 
 def extract(
@@ -67,13 +108,23 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
             "jurisdiction": pl.String,
         }
     )
-
-    data_transformed = data.with_columns(
-        pl.col(c).cast(dtype) for c, dtype in schema.items()
-    )
-    data_transformed = data_transformed.with_columns(
-        pl.col("weekendingdate").dt.date()
-    )
+    try:
+        data_transformed = data.with_columns(
+            pl.col(c).cast(dtype) for c, dtype in schema.items()
+        )
+        data_transformed = data_transformed.with_columns(
+            pl.col("weekendingdate").dt.date()
+        )
+    except Exception:
+        # for archives that have already been converted to date only
+        schema.update(
+            {
+                "weekendingdate": pl.Date,
+            }
+        )
+        data_transformed = data.with_columns(
+            pl.col(c).cast(dtype) for c, dtype in schema.items()
+        )
 
     # Additional transformations can be added here as needed examples:
     # - Renaming columns

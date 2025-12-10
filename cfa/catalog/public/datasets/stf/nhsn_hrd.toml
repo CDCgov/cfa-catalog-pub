@@ -25,6 +25,8 @@ domain = "data.cdc.gov"
 id = "ua7e-t2fy"
 id_pre = "mpgq-jmmr"
 limit = 10000
+archive.repo = "paulocv/respiratory_archive"
+archive.path = "datasets/nhsn_weekly_jurisdiction"
 
 ############################################################################
 
