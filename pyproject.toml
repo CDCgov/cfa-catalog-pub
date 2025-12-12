@@ -40,7 +40,7 @@ dev = [
 
 [project.scripts]
 stf_nssp_gold_copy = "cfa.catalog.public.workflows.etl.stf.nssp_gold:copy_missing_files"
-stf_hsn_hrd_etl = "cfa.catalog.public.workflows.etl.stf.nhsn_hrd:etl"
+stf_nhsn_hrd_etl = "cfa.catalog.public.workflows.etl.stf.nhsn_hrd:etl"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules -vv --cov=cfa --cov-report html --cov-report term"
