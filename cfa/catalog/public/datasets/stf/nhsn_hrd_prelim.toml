@@ -1,0 +1,57 @@
+# This dataset config is for weekly pulls of the Weekly Hospital Respiratory
+# Data (HRD) Metrics by Jurisdiction, National Healthcare Safety Network
+# (NHSN) (Preliminary)
+# https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "nhsn_hrd_prelim"
+automate = false
+transform_templates = ["{location for any sql applied to reference data}"]
+# schemas = "{path file containing any dataframe schema definitions}"
+type = "etl"
+
+############################################################################
+
+[source]
+# These source fields are open to being changed based on the source type
+# and api requirements. This example uses a Socrata data source
+# which is common for CDC data sources.
+
+domain = "data.cdc.gov"
+id = "mpgq-jmmr"
+limit = 10000
+archive.repo = "paulocv/respiratory_archive"
+archive.path = "datasets/nhsn_weekly_jurisdiction"
+
+############################################################################
+
+[extract]
+# These are the details of where to store the raw extracted data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/stf/raw/nhsn_hrd_prelim"
+
+############################################################################
+
+[load]
+# These are the details of where to store the transformed and loaded data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/stf/transformed/nhsn_hrd_prelim"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-01-26: Initial version created by Ryan Raasch
