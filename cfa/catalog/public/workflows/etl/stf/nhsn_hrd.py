@@ -98,40 +98,42 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
     Returns:
         pl.DataFrame: Transformed data
     """
-
-    # Convert date columns to proper date types
-    schema = {k: pl.Float64 for k, v in data.schema.items()}
-
-    schema.update(
-        {
-            "weekendingdate": pl.Datetime(time_unit="ms"),
-            "jurisdiction": pl.String,
-        }
-    )
+    # Convert weekendingdate to datetime[ms]
     try:
-        data_transformed = data.with_columns(
-            pl.col(c).cast(dtype) for c, dtype in schema.items()
+        data_t = data.with_columns(
+            pl.col("weekendingdate").str.to_datetime(
+                format="%Y-%m-%dT%H:%M:%S.000"
+            )
         )
-        data_transformed = data_transformed.with_columns(
-            pl.col("weekendingdate").dt.date()
+    except Exception as e:
+        print(
+            f"weekendingdate left unchanged.Error converting weekendingdate to datetime: {e}"
         )
-    except Exception:
-        # for archives that have already been converted to date only
-        schema.update(
-            {
-                "weekendingdate": pl.Date,
-            }
+        data_t = data
+
+    # Ensure jurisdiction is string type
+    try:
+        data_t = data_t.with_columns(pl.col("jurisdiction").cast(pl.String))
+    except Exception as e:
+        print(f"Error converting jurisdiction to string: {e}")
+        raise
+
+    try:
+        # Convert all columns except specific ones to float
+        data_t = data_t.with_columns(
+            pl.exclude(["weekendingdate", "jurisdiction"]).cast(
+                pl.Float64, strict=False
+            )
         )
-        data_transformed = data.with_columns(
-            pl.col(c).cast(dtype) for c, dtype in schema.items()
-        )
+    except Exception as e:
+        print(f"Error converting columns to Float64: {e}")
 
     # Additional transformations can be added here as needed examples:
     # - Renaming columns
     # - Filtering rows
     # - Creating new calculated columns
 
-    return data_transformed
+    return data_t
 
 
 def load(data: pl.DataFrame) -> None:
