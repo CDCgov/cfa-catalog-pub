@@ -108,7 +108,7 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
         )
     except Exception as e:
         print(
-            f"weekendingdate left unchanged.Error converting weekendingdate to datetime: {e}"
+            f"weekendingdate left unchanged. Error converting weekendingdate to datetime: {e}"
         )
         data_t = data
 
