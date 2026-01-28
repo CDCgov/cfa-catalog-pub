@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 import os
 import re
@@ -31,28 +32,35 @@ def etl_archive():
             r"nhsn_(\d{4}\-\d{2}\-\d{2})\.csv", file.name
         )
         if version_match:
-            version_date = version_match.group(1) + "T00-00-00"
-            if version_date not in current_extracted_versions:
-                print(f"Downloading and loading {file.name} from archive...")
-                # Extract file from GitHub if isn't already cached
-                r = requests.get(file.download_url)
-                data = r.text
-                dataset.extract.write_blob(
-                    file_buffer=bytes(data, "utf-8"),
-                    path_after_prefix=f"{version_date}/{file.name}",
-                    auto_version=False,
-                )
-                # Transform the data
-                df_t = transform(pl.read_csv(StringIO(data)))
-                # Load the transformed data
-                buffer = BytesIO()
-                df_t.write_parquet(buffer)
-                dataset.load.write_blob(
-                    file_buffer=buffer.getvalue(),
-                    path_after_prefix=f"{version_date}/data.parquet",
-                    auto_version=False,
-                )
-                buffer.close()
+            date_str = version_match.group(1)
+            # parse the date
+            date_obj = datetime.datetime.fromisoformat(date_str)
+            # check if not Wednesday since prelim drops on Wednesdays and final is usually Fridays
+            if date_obj.weekday() != 2:
+                version_date = version_match.group(1) + "T00-00-00"
+                if version_date not in current_extracted_versions:
+                    print(
+                        f"Downloading and loading {file.name} from archive..."
+                    )
+                    # Extract file from GitHub if isn't already cached
+                    r = requests.get(file.download_url)
+                    data = r.text
+                    dataset.extract.write_blob(
+                        file_buffer=bytes(data, "utf-8"),
+                        path_after_prefix=f"{version_date}/{file.name}",
+                        auto_version=False,
+                    )
+                    # Transform the data
+                    df_t = transform(pl.read_csv(StringIO(data)))
+                    # Load the transformed data
+                    buffer = BytesIO()
+                    df_t.write_parquet(buffer)
+                    dataset.load.write_blob(
+                        file_buffer=buffer.getvalue(),
+                        path_after_prefix=f"{version_date}/data.parquet",
+                        auto_version=False,
+                    )
+                    buffer.close()
 
 
 def extract(
@@ -101,7 +109,7 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
     # Convert weekendingdate to datetime[ms]
     try:
         data_t = data.with_columns(
-            pl.col("weekendingdate").str.to_datetime(
+            pl.col("weekendingdate").str.to_date(
                 format="%Y-%m-%dT%H:%M:%S.000"
             )
         )
