@@ -7,7 +7,7 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
-# [2026.01.27.0]
+# [2026.01.28.0]
 
 ## Added
 
