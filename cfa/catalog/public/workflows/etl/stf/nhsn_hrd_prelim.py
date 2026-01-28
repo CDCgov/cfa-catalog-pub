@@ -115,10 +115,16 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
             )
         )
     except Exception as e:
-        print(
-            f"weekendingdate left unchanged. Error converting weekendingdate to datetime: {e}"
-        )
-        data_t = data
+        try:
+            # try alternative format
+            data_t = data.with_columns(
+                pl.col("weekendingdate").str.to_date(format="%Y-%m-%d")
+            )
+        except Exception as ex:
+            print(
+                f"weekendingdate left unchanged. Error converting weekendingdate to datetime: {e}; {ex}"
+            )
+            data_t = data
 
     # Ensure jurisdiction is string type
     try:
