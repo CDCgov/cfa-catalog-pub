@@ -1,5 +1,4 @@
 import argparse
-import datetime
 import json
 import os
 import re
@@ -8,6 +7,7 @@ from typing import Optional
 
 import polars as pl
 import requests
+import yaml
 from github import Github
 
 from cfa.dataops import datacat
@@ -27,16 +27,22 @@ def etl_archive():
     repo = g.get_repo(dataset.config["source"]["archive"]["repo"])
     contents = repo.get_contents(dataset.config["source"]["archive"]["path"])
     current_extracted_versions = dataset.extract.get_versions()
+    # extract metadata file
+    download_url = "https://raw.githubusercontent.com/paulocv/respiratory_archive/main/datasets/nhsn_weekly_jurisdiction/metadata.yaml"
+    r = requests.get(download_url)
+    metadata = yaml.safe_load(r.text)
+    prelim_files = [
+        mfile["filename"]
+        for mfile in metadata["files"]
+        if mfile["release"] == "prelim"
+    ]
     for file in contents:
         version_match = re.search(
             r"nhsn_(\d{4}\-\d{2}\-\d{2})\.csv", file.name
         )
         if version_match:
-            date_str = version_match.group(1)
-            # parse the date
-            date_obj = datetime.datetime.fromisoformat(date_str)
-            # check if not Wednesday since prelim drops on Wednesdays and final is usually Fridays
-            if date_obj.weekday() != 2:
+            # check if file is prelim
+            if file.name in prelim_files:
                 version_date = version_match.group(1) + "T00-00-00"
                 if version_date not in current_extracted_versions:
                     print(
