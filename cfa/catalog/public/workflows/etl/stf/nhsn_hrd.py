@@ -34,14 +34,14 @@ def etl_archive():
     prelim_files = [
         mfile["filename"]
         for mfile in metadata["files"]
-        if mfile["release"] == "prelim"
+        if mfile["release"] == "consol"
     ]
     for file in contents:
         version_match = re.search(
             r"nhsn_(\d{4}\-\d{2}\-\d{2})\.csv", file.name
         )
         if version_match:
-            # check if file is prelim
+            # check if file is consol
             if file.name in prelim_files:
                 version_date = version_match.group(1) + "T00-00-00"
                 if version_date not in current_extracted_versions:
