@@ -31,7 +31,7 @@ def etl_archive():
     download_url = "https://raw.githubusercontent.com/paulocv/respiratory_archive/main/datasets/nhsn_weekly_jurisdiction/metadata.yaml"
     r = requests.get(download_url)
     metadata = yaml.safe_load(r.text)
-    prelim_files = [
+    consol_files = [
         mfile["filename"]
         for mfile in metadata["files"]
         if mfile["release"] == "consol"
@@ -42,7 +42,7 @@ def etl_archive():
         )
         if version_match:
             # check if file is consol
-            if file.name in prelim_files:
+            if file.name in consol_files:
                 version_date = version_match.group(1) + "T00-00-00"
                 if version_date not in current_extracted_versions:
                     print(
