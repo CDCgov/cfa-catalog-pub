@@ -2,7 +2,7 @@
 
 ## Setup
 
-The NHSN HRD data are separated into two groups in this catalog: nhsn_hrd and nhsn_hrd_prelim. 
+The NHSN HRD data are separated into two groups in this catalog: nhsn_hrd and nhsn_hrd_prelim.
 
 There are two ways to get the new data into blob storage for cfa-dataops retrieval.
 
@@ -19,7 +19,7 @@ from cfa.catalog.public.workflows.etl.stf import nhsn_hrd, nhsn_hrd_prelim
 nhsn_hrd.etl_archive()
 
 #kick off the archive for the prelim version
-nhsn_hrd_prelim.etl_archive)
+nhsn_hrd_prelim.etl_archive()
 ```
 
 ## Run ETL
@@ -42,8 +42,8 @@ nhsn_hrd_prelim.load(data_t)
 ## Accessing the transformed data
 
 ```python
-# import 
-from cfa.dataops impport datacat
+# import
+from cfa.dataops import datacat
 
 # assign the namespace for easier access
 dataset = datacat.public.stf.nhsn_hrd
