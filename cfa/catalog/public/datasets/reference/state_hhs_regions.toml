@@ -18,7 +18,7 @@ type = "reference"
 
 [source]
 # These source fields are open to being changed based on the source type
-# and api requirements. 
+# and api requirements.
 
 url = "https://github.com/CDCgov/scenarios-hpc-azure/blob/main/src/scenarios_hpc_azure/data/regions_mapping_combined.csv"
 
@@ -37,4 +37,4 @@ prefix = "dataops/reference/data/state_hhs_regions"
 
 # Changelog
 # ---------
-# 2025-01-07: add state_hhs_regions datasource 
+# 2026-02-03: add state_hhs_regions datasource
