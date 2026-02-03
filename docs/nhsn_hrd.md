@@ -47,7 +47,7 @@ from cfa.dataops import datacat
 
 # assign the namespace for easier access
 dataset = datacat.public.stf.nhsn_hrd
-dataset_pre = datacat.public.stf.nhsn_hrd_prelim
+dataset_prelim = datacat.public.stf.nhsn_hrd_prelim
 
 # get the "load" (transformed) datasets
 df = dataset.load.get_dataframe()
