@@ -10,7 +10,7 @@ authors = [{name = "cfa-dataops"}]
 readme = "README.md"
 requires-python = ">=3.10,<3.11"
 dependencies = [
-    "cfa-dataops @ git+https://github.com/CDCgov/cfa-dataops.git@rr-58-update-get_df",
+    "cfa-dataops @ git+https://github.com/CDCgov/cfa-dataops.git@main",
     "pandera[pandas] (>=0.25.0)",
     "tomli (>=2.2.1,<3.0.0)",
     "httpx (>=0.28.1,<0.29.0)",
