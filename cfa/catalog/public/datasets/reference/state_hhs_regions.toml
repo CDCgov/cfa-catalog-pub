@@ -1,0 +1,40 @@
+# This dataset config is for state HHS regions, including
+# state, US, and territory, FIPS codes, and HHS regions.
+# This is a static dataset used for reference.
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "state_hhs_regions"
+automate = false
+transform_templates = ["{location for any sql applied to reference data}"]
+# schemas = "{path file containing any dataframe schema definitions}"
+type = "reference"
+
+############################################################################
+
+[source]
+# These source fields are open to being changed based on the source type
+# and api requirements.
+
+url = "https://github.com/CDCgov/scenarios-hpc-azure/blob/main/src/scenarios_hpc_azure/data/regions_mapping_combined.csv"
+
+############################################################################
+
+[data]
+# These are the details of where to store the data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/reference/data/state_hhs_regions"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-02-03: add state_hhs_regions datasource
