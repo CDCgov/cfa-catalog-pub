@@ -12,7 +12,7 @@ There are three ways to get the new data into blob storage for cfa-dataops retri
 
 ## GitHub Workflow
 
-There is an internal repo called cfa-dataops-scheduler which is setup to run a workflow weekly to execute the etl pipeline for the prelim and final datasets. The prelim execution kicks off automatically on Wednesday afternoons. The final execution kicks off automatically around midnight on Saturadys. Each workflow pulls data from the data.cdc.gov location and stores the results in Blob Storage. These executions spin up a container app job that processes the etl pipeline.
+There is an internal repo called cfa-dataops-scheduler which is setup to run a workflow weekly to execute the etl pipeline for the prelim and final datasets. The prelim execution kicks off automatically on Wednesday afternoons. The final execution kicks off automatically around midnight on Saturdays. Each workflow pulls data from the data.cdc.gov location and stores the results in Blob Storage. These executions spin up a container app job that processes the etl pipeline.
 
 If you need to run the etl pipeline outside of the automated weekly runs, you can manually kick off the workflow. From the cfa-dataops-scheduler repo, navigate to the Actions tab and select the desired workflow. Then hit `run workflow`.
 
