@@ -13,7 +13,7 @@ from github import Github
 from cfa.dataops import datacat
 from cfa.dataops.soda import Query
 
-dataset = datacat.public.stf.nhsn_hrd
+dataset = datacat.public.stf.nhsn_hrd_prelim
 
 access_token = os.getenv("CDC_SODA_API_TOKEN")
 
@@ -31,18 +31,18 @@ def etl_archive():
     download_url = "https://raw.githubusercontent.com/paulocv/respiratory_archive/main/datasets/nhsn_weekly_jurisdiction/metadata.yaml"
     r = requests.get(download_url)
     metadata = yaml.safe_load(r.text)
-    consol_files = [
-        mfile["filename"]
-        for mfile in metadata["files"]
-        if mfile["release"] == "consol"
+    prelim_files = [
+        file["filename"]
+        for file in metadata["files"]
+        if file["release"] == "prelim"
     ]
     for file in contents:
         version_match = re.search(
             r"nhsn_(\d{4}\-\d{2}\-\d{2})\.csv", file.name
         )
         if version_match:
-            # check if file is consol
-            if file.name in consol_files:
+            # check if file is prelim
+            if file.name in prelim_files:
                 version_date = version_match.group(1) + "T00-00-00"
                 if version_date not in current_extracted_versions:
                     print(
@@ -112,6 +112,7 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
     Returns:
         pl.DataFrame: Transformed data
     """
+
     # Convert weekendingdate to datetime[ms]
     try:
         data_t = data.with_columns(

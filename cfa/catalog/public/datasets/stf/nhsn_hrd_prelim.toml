@@ -1,6 +1,7 @@
 # This dataset config is for weekly pulls of the Weekly Hospital Respiratory
 # Data (HRD) Metrics by Jurisdiction, National Healthcare Safety Network
 # (NHSN) (Preliminary)
+# https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data
 
 ############################################################################
 
@@ -8,7 +9,7 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "nhsn_hrd"
+name = "nhsn_hrd_prelim"
 automate = false
 transform_templates = ["{location for any sql applied to reference data}"]
 # schemas = "{path file containing any dataframe schema definitions}"
@@ -22,7 +23,7 @@ type = "etl"
 # which is common for CDC data sources.
 
 domain = "data.cdc.gov"
-id = "ua7e-t2fy"
+id = "mpgq-jmmr"
 limit = 10000
 archive.repo = "paulocv/respiratory_archive"
 archive.path = "datasets/nhsn_weekly_jurisdiction"
@@ -36,7 +37,7 @@ archive.path = "datasets/nhsn_weekly_jurisdiction"
 
 account = ""
 container = ""
-prefix = "dataops/stf/raw/nhsn_hrd"
+prefix = "dataops/stf/raw/nhsn_hrd_prelim"
 
 ############################################################################
 
@@ -47,10 +48,10 @@ prefix = "dataops/stf/raw/nhsn_hrd"
 
 account = ""
 container = ""
-prefix = "dataops/stf/transformed/nhsn_hrd"
+prefix = "dataops/stf/transformed/nhsn_hrd_prelim"
 
 ############################################################################
 
 # Changelog
 # ---------
-# 2025-12-08: Initial version created by Phil Rogers
+# 2026-01-26: Initial version created by Ryan Raasch

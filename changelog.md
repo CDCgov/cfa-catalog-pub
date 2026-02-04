@@ -7,6 +7,17 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.01.28.0]
+
+## Added
+
+- `public.stf.nhsn_hrd_prelim` dataset and corresponding etl workflow
+
+# [2026.01.05.0]
+
+## Changed
+
+- Loosened version requirements for dependencies.
 
 # [2025.12.08.0]
 
