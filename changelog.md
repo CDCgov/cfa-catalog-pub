@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.02.04.0]
+
+## Added
+
+- reference state_hhs_regions dataset
+
 # [2026.01.28.0]
 
 ## Added
