@@ -7,7 +7,7 @@ The NHSN HRD data are separated into two groups in this catalog: nhsn_hrd and nh
 There are three ways to get the new data into blob storage for cfa-dataops retrieval.
 
 1. use the etl_archive function to pull in data from the archive repo. This intended only to "catch up" on our own archive of the datasets in Blob Storage.
-2. run the etl process to store the newest dataset available on data.cdc.gov. This available for continuing to pull in the newest data using python.
+2. run the etl process to store the newest dataset available on data.cdc.gov. This is available for continuing to pull in the newest data using python.
 3. run the workflow for the dataset in GitHub Actions with the manual workflow dispatch. This is setup to run automatically every week to pull in new information so that the previous two methods are not necessary.
 
 ## GitHub Workflow
