@@ -28,7 +28,7 @@ storage_location.container = "prod-param-estimates"
 
 account = "" # use default
 container = "" # use default
-prefix = "dataops/public/stf/param_estimates/"
+prefix = "dataops/stf/param_estimates/"
 
 ############################################################################
 
