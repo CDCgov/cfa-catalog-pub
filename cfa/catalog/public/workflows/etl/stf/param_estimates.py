@@ -1,8 +1,8 @@
+import re
 from types import SimpleNamespace
 
 import polars as pl
 import tqdm
-import re
 
 from cfa.cloudops.blob_helpers import read_blob_stream, walk_blobs_in_container
 from cfa.dataops import datacat
@@ -25,17 +25,11 @@ def copy_missing_files() -> None:
     cached_versions = dataset.load.get_versions()
     file_list = []
     for file in param_files:
-        version_match = re.search(
-            r"^(\d{4}\-\d{2}\-\d{2}).*\.parquet", file
-        )
+        version_match = re.search(r"^(\d{4}\-\d{2}\-\d{2}).*\.parquet", file)
         if version_match:
             file_list.append(file)
-            
-    files_to_copy = [
-        i
-        for i in file_list
-        if i[0:10] not in cached_versions
-    ]
+
+    files_to_copy = [i for i in file_list if i[0:10] not in cached_versions]
 
     if not files_to_copy:
         print("No new files to copy")
