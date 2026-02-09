@@ -1,7 +1,5 @@
-# This is an example dataset configuration file for the dataops create_catalog tool.
-# It is designed to represent the data provenance of reference data that can be used
-# on multiple projects. Reference data is typically static or changes infrequently.
-# Thus, it is not necessary to store the raw extracted data, only the transformed
+# This dataset versions the prod-param-estimates data stored in blob storage.
+# It will be used in a weekly pipeline to update the data in the catalog.
 
 ############################################################################
 
@@ -10,7 +8,7 @@
 # files can be accessed in the datacat by key/name.
 
 name = "param_estimates"
-type = "experiment"
+type = "reference"
 
 ############################################################################
 
