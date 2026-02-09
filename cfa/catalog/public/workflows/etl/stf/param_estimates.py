@@ -23,11 +23,13 @@ def copy_missing_files() -> None:
         reverse=True,
     )
     cached_versions = dataset.load.get_versions()
-    file_list = []
-    for file in param_files:
-        version_match = re.search(r"^(\d{4}\-\d{2}\-\d{2}).*\.parquet", file)
-        if version_match:
-            file_list.append(file)
+    pattern = re.compile(r"^(\d{4}-\d{2}-\d{2}).*\.parquet")
+
+    files_to_copy = [
+        f for f in param_files
+        if (m := pattern.search(f))
+        and m.group(1) not in cached_versions
+    ]
 
     files_to_copy = [i for i in file_list if i[0:10] not in cached_versions]
 
