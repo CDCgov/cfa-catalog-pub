@@ -1,0 +1,35 @@
+# This dataset versions the prod-param-estimates data stored in blob storage.
+# It will be used in a weekly pipeline to update the data in the catalog.
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "param_estimates"
+type = "reference"
+
+############################################################################
+
+[source]
+
+storage_location.account = "cfaazurebatchprd"
+storage_location.container = "prod-param-estimates"
+
+############################################################################
+
+[load]
+# These are the details of where to store the reference data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = "" # use default
+container = "" # use default
+prefix = "dataops/stf/transformed/param_estimates/"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-02-06: Initial version created by Ryan Raasch (xng3)
