@@ -13,6 +13,12 @@ The versioning pattern is `YYYY.MM.DD.micro
 
 - reference cenpop2020 dataset
 
+# [2025.02.06.0]
+
+## Added
+
+- parameter_estimates dataset
+
 # [2026.02.04.0]
 
 ## Added
