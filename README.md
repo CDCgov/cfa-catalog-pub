@@ -23,16 +23,16 @@ The catalog is built on the `cfa-dataops` framework and provides:
 
 ### Available Datasets
 
-reference
-  | cenpop2020: Census Population 2020
-  | state_hhs_regions: State, HHS, FIPS data
+- **reference**
+  - `cenpop2020`: Census Population 2020
+  - `state_hhs_regions`: State, HHS, FIPS data
 
-stf
-  | nhsn_hrd_prelim
-  | nhsn_hrd
-  | nssp_gold
-  | nwss
-  | param_estimates
+- **stf**
+  - `nhsn_hrd_prelim`
+  - `nhsn_hrd`
+  - `nssp_gold`
+  - `nwss`
+  - `param_estimates`
 
 ## Project admins
 
