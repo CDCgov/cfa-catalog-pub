@@ -21,6 +21,19 @@ The catalog is built on the `cfa-dataops` framework and provides:
 - **Report Generation**: Automated report creation with parameterizable notebooks
 - **Multi-Catalog Support**: This catalog can be installed alongside other catalogs, with all namespaces co-located in the `datacat` and `reportcat` objects for unified access
 
+### Available Datasets
+
+reference
+  | cenpop2020: Census Population 2020
+  | state_hhs_regions: State, HHS, FIPS data
+
+stf
+  | nhsn_hrd_prelim
+  | nhsn_hrd
+  | nssp_gold
+  | nwss
+  | param_estimates
+
 ## Project admins
 
 - Phillip Rogers <ap66@cdc.gov> (CDC/OD/ORR/CFA)(CTR)
