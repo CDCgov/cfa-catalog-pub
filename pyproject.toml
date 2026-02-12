@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cfa.catalog.public"
-version = "2026.02.10.0"
+version = "2026.02.12.0"
 description = "CFA Public Catalog"
 authors = [{name = "cfa-dataops"}]
 readme = "README.md"

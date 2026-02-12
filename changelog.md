@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.02.12.0]
+
+## Added
+
+- list of datasets available added to README
+
 # [2026.02.10.0]
 
 ## Added
