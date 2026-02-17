@@ -50,7 +50,11 @@ def copy_missing_files() -> None:
 
         # if there is some transformation to the original data that should be performed before saving
         # make those transformations to the dataframe here
-        date = re.search(date_pattern, file).group(1)
+        date_match = date_pattern.search(file)
+        if date_match is None:
+            # Skip files that do not contain a valid date, for defensive robustness
+            continue
+        date = date_match.group(1)
 
         dataset.load.save_dataframe(
             df,
