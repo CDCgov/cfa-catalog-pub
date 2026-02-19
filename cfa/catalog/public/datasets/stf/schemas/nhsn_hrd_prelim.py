@@ -18,6 +18,7 @@ load_schema = pa.DataFrameSchema(
     "id": pa.Column(int, nullable=False),
     "name": pa.Column(str, nullable=False),
     }
+)
 
 def extract_mock_data(output = "pandas", size = 10) -> pd.DataFrame|pl.DataFrame:
     data = {
