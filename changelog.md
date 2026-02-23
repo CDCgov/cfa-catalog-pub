@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.02.23.0]
+
+## Fixed
+
+- fixed nssp pipeline to exclude non-parquet files
+
 # [2026.02.17.0]
 
 ## Added
