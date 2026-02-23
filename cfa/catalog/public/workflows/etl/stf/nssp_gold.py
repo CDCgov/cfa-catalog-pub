@@ -27,7 +27,8 @@ def copy_missing_files() -> None:
     files_to_copy = [
         i
         for i in nssp_files
-        if i.removesuffix(".parquet") not in cached_versions
+        if i.endswith(".parquet")
+        and i.removesuffix(".parquet") not in cached_versions
     ]
 
     if not files_to_copy:
