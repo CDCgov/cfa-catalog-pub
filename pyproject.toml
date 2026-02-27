@@ -24,10 +24,8 @@ dependencies = [
     "jupyter (>=1.1.1)",
     "rich (>=14.1.0)",
     "faker (>=37.8.0)",
-    "PyGithub (>=2.8.1)",
-    "faker"
+    "PyGithub (>=2.8.1)"
 ]
-
 [tool.setuptools.packages.find]
 namespaces = true
 include = ["cfa*"]
