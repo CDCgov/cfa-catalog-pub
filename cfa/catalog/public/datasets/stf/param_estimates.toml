@@ -9,6 +9,7 @@
 
 name = "param_estimates"
 type = "reference"
+schemas = "datasets/stf/schemas/param_estimates.py"
 
 ############################################################################
 
