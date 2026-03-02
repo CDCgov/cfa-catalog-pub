@@ -111,9 +111,9 @@ load_schema = pa.DataFrameSchema(
 def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
     df = pd.DataFrame()
     df = df.assign(
-        report_date=["2026-02-02"] * size,
-        reference_date=["2023-07-01"] * size,
-        asof=["2026-02-02"] * size,
+        report_date=["2026-02-02T00:00:00.000"] * size,
+        reference_date=["2023-07-01T00:00:00.000"] * size,
+        asof=["2026-02-02T00:00:00.000"] * size,
         facility=[random.randint(1237, 35720) for _ in range(size)],
         metric=random.choices(metric_opts, k=size),
         geo_type=["state"] * size,

@@ -187,45 +187,46 @@ load_schema = pa.DataFrameSchema(
         "pvals_flowpop_5m": pa.Column(float, nullable=True),
         "pdc_flowpop_5m": pa.Column(float, nullable=True),
         "predsuprexc_flowpop_5m": pa.Column(float, nullable=True),
-        "alert_flowpop_5m": pa.Column(float, nullable=True),
+        "alert_flowpop_5m": pa.Column(str, nullable=True),
         "slopes_flowpop_3m": pa.Column(float, nullable=True),
         "pvals_flowpop_3m": pa.Column(float, nullable=True),
         "pdc_flowpop_3m": pa.Column(float, nullable=True),
         "predsuprexc_flowpop_3m": pa.Column(float, nullable=True),
-        "alert_flowpop_3m": pa.Column(float, nullable=True),
-        "trend_flowpop_5m3m_p05": pa.Column(float, nullable=True),
-        "trend_flowpop_5m3m_p05_prev": pa.Column(float, nullable=True),
+        "alert_flowpop_3m": pa.Column(str, nullable=True),
+        "trend_flowpop_5m3m_p05": pa.Column(str, nullable=True),
+        "trend_flowpop_5m3m_p05_prev": pa.Column(str, nullable=True),
         "slopes_mic_5m": pa.Column(float, nullable=True),
         "pvals_mic_5m": pa.Column(float, nullable=True),
         "pdc_mic_5m": pa.Column(float, nullable=True),
         "predsuprexc_mic_5m": pa.Column(float, nullable=True),
-        "alert_mic_3m": pa.Column(float, nullable=True),
-        "trend_mic_5m3m_p05": pa.Column(float, nullable=True),
-        "trend_mic_5m3m_p05_prev": pa.Column(float, nullable=True),
+        "alert_mic_5m": pa.Column(str, nullable=True),
+        "alert_mic_3m": pa.Column(str, nullable=True),
+        "trend_mic_5m3m_p05": pa.Column(str, nullable=True),
+        "trend_mic_5m3m_p05_prev": pa.Column(str, nullable=True),
         "slopes_flowpop_15d": pa.Column(float, nullable=True),
         "pvals_flowpop_15d": pa.Column(float, nullable=True),
         "pdc_flowpop_15d": pa.Column(float, nullable=True),
         "predsuprexc_flowpop_15d": pa.Column(float, nullable=True),
-        "alert_flowpop_15d": pa.Column(float, nullable=True),
+        "alert_flowpop_15d": pa.Column(str, nullable=True),
         "slopes_flowpop_8d": pa.Column(float, nullable=True),
         "pvals_flowpop_8d": pa.Column(float, nullable=True),
         "pdc_flowpop_8d": pa.Column(float, nullable=True),
         "predsuprexc_flowpop_8d": pa.Column(float, nullable=True),
-        "alert_flowpop_8d": pa.Column(float, nullable=True),
-        "trend_flowpop_15d8d_p05": pa.Column(float, nullable=True),
-        "trend_flowpop_15d8d_p05_prev": pa.Column(float, nullable=True),
+        "alert_flowpop_8d": pa.Column(str, nullable=True),
+        "trend_flowpop_15d8d_p05": pa.Column(str, nullable=True),
+        "trend_flowpop_15d8d_p05_prev": pa.Column(str, nullable=True),
         "slopes_mic_15d": pa.Column(float, nullable=True),
         "pvals_mic_15d": pa.Column(float, nullable=True),
         "pdc_mic_15d": pa.Column(float, nullable=True),
         "predsuprexc_mic_15d": pa.Column(float, nullable=True),
-        "alert_mic_15d": pa.Column(float, nullable=True),
+        "alert_mic_15d": pa.Column(str, nullable=True),
         "slopes_mic_8d": pa.Column(float, nullable=True),
         "pvals_mic_8d": pa.Column(float, nullable=True),
         "pdc_mic_8d": pa.Column(float, nullable=True),
         "predsuprexc_mic_8d": pa.Column(float, nullable=True),
-        "alert_mic_8d": pa.Column(float, nullable=True),
-        "trend_mic_15d8d_p05": pa.Column(float, nullable=True),
-        "trend_mic_15d8d_p05_prev": pa.Column(float, nullable=True),
+        "alert_mic_8d": pa.Column(str, nullable=True),
+        "trend_mic_15d8d_p05": pa.Column(str, nullable=True),
+        "trend_mic_15d8d_p05_prev": pa.Column(str, nullable=True),
         "cases_new_cens": pa.Column(float, nullable=True),
         "pcr_target_mic_lin_roll7": pa.Column(float, nullable=True),
         "pcr_target_flowpop_lin_roll7": pa.Column(float, nullable=True),
@@ -234,19 +235,19 @@ load_schema = pa.DataFrameSchema(
         "cases_new_cens_per100k_spline": pa.Column(float, nullable=True),
         "pcr_target_detect": pa.Column(float, nullable=True),
         "hum_frac_mic_conc": pa.Column(float, nullable=True),
-        "hum_frac_mic_unit": pa.Column(float, nullable=True),
+        "hum_frac_mic_unit": pa.Column(str, nullable=True),
         "hum_frac_chem_conc": pa.Column(float, nullable=True),
-        "hum_frac_chem_unit": pa.Column(float, nullable=True),
+        "hum_frac_chem_unit": pa.Column(str, nullable=True),
         "other_norm_conc": pa.Column(float, nullable=True),
-        "other_norm_unit": pa.Column(float, nullable=True),
+        "other_norm_unit": pa.Column(str, nullable=True),
         "lod_sewage": pa.Column(float, nullable=True),
         "pcr_target": pa.Column(float, nullable=True),
         "pcr_gene_target_agg": pa.Column(float, nullable=True),
         "inhibition_detect": pa.Column(float, nullable=True),
         "inhibition_adjust": pa.Column(float, nullable=True),
         "hum_frac_target_chem": pa.Column(float, nullable=True),
-        "other_norm_name": pa.Column(float, nullable=True),
-        "hum_frac_target_mic": pa.Column(float, nullable=True),
+        "other_norm_name": pa.Column(str, nullable=True),
+        "hum_frac_target_mic": pa.Column(str, nullable=True),
         "flow_rate": pa.Column(float, nullable=True),
         "pcr_target_avg_conc": pa.Column(float, nullable=True),
         "pcr_target_below_lod": pa.Column(float, nullable=True),
@@ -258,7 +259,7 @@ load_schema = pa.DataFrameSchema(
         "pasteurized": pa.Column(float, nullable=True),
         "pcr_type": pa.Column(float, nullable=True),
         "quant_stan_type": pa.Column(float, nullable=True),
-        "pcr_target_units": pa.Column(float, nullable=True),
+        "pcr_target_units": pa.Column(str, nullable=True),
         "quality_flag": pa.Column(float, nullable=True),
         "collection_storage_temp": pa.Column(float, nullable=True),
         "collection_storage_time": pa.Column(float, nullable=True),
@@ -355,7 +356,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         ],
         "capacity_mgd": [random.uniform(0.02, 1440) for _ in range(size)],
         "population_served": [
-            random.randint(3000, 4000000) for _ in range(size)
+            random.choice(["yes", "no"]) for _ in range(size)
         ],
         "industrial_input": [random.uniform(0, 75) for _ in range(size)],
         "sewage_travel_time": [random.uniform(0, 72) for _ in range(size)],
@@ -377,7 +378,9 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "alert_flowpop_3m": [
             random.choice(["yes", "no"]) for _ in range(size)
         ],
-        "trend_flowpop_5m3m_p05": [random.uniform(-1, 1) for _ in range(size)],
+        "trend_flowpop_5m3m_p05": [
+            random.choice(trend_flowpop_opts) for _ in range(size)
+        ],
         "trend_flowpop_5m3m_p05_prev": [
             random.choice(trend_flowpop_opts) for _ in range(size)
         ],
@@ -391,7 +394,9 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "pdc_mic_3m": [random.uniform(-95, 1600) for _ in range(size)],
         "predsuprexc_mic_3m": [random.uniform(-19, 129) for _ in range(size)],
         "alert_mic_3m": [random.choice(["yes", "no"]) for _ in range(size)],
-        "trend_mic_5m3m_p05": [random.uniform(-1, 1) for _ in range(size)],
+        "trend_mic_5m3m_p05": [
+            random.choice(trend_flowpop_opts) for _ in range(size)
+        ],
         "trend_mic_5m3m_p05_prev": [
             random.choice(trend_flowpop_opts) for _ in range(size)
         ],
@@ -414,7 +419,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
             random.choice(["yes", "no"]) for _ in range(size)
         ],
         "trend_flowpop_15d8d_p05": [
-            random.uniform(-1, 1) for _ in range(size)
+            random.choice(trend_flowpop_opts) for _ in range(size)
         ],
         "trend_flowpop_15d8d_p05_prev": [
             random.choice(trend_flowpop_opts) for _ in range(size)
@@ -429,7 +434,9 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "pdc_mic_8d": [random.uniform(-95, 1600) for _ in range(size)],
         "predsuprexc_mic_8d": [random.uniform(-19, 129) for _ in range(size)],
         "alert_mic_8d": [random.choice(["yes", "no"]) for _ in range(size)],
-        "trend_mic_15d8d_p05": [random.uniform(-1, 1) for _ in range(size)],
+        "trend_mic_15d8d_p05": [
+            random.choice(trend_flowpop_opts) for _ in range(size)
+        ],
         "trend_mic_15d8d_p05_prev": [
             random.choice(trend_flowpop_opts) for _ in range(size)
         ],
