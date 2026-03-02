@@ -233,7 +233,7 @@ load_schema = pa.DataFrameSchema(
         "pcr_target_flowpop_lin_spline": pa.Column(float, nullable=True),
         "pcr_target_mic_lin_spline": pa.Column(float, nullable=True),
         "cases_new_cens_per100k_spline": pa.Column(float, nullable=True),
-        "pcr_target_detect": pa.Column(float, nullable=True),
+        "pcr_target_detect": pa.Column(str, nullable=True),
         "hum_frac_mic_conc": pa.Column(float, nullable=True),
         "hum_frac_mic_unit": pa.Column(str, nullable=True),
         "hum_frac_chem_conc": pa.Column(float, nullable=True),
@@ -241,26 +241,26 @@ load_schema = pa.DataFrameSchema(
         "other_norm_conc": pa.Column(float, nullable=True),
         "other_norm_unit": pa.Column(str, nullable=True),
         "lod_sewage": pa.Column(float, nullable=True),
-        "pcr_target": pa.Column(float, nullable=True),
-        "pcr_gene_target_agg": pa.Column(float, nullable=True),
-        "inhibition_detect": pa.Column(float, nullable=True),
-        "inhibition_adjust": pa.Column(float, nullable=True),
+        "pcr_target": pa.Column(str, nullable=True),
+        "pcr_gene_target_agg": pa.Column(str, nullable=True),
+        "inhibition_detect": pa.Column(str, nullable=True),
+        "inhibition_adjust": pa.Column(str, nullable=True),
         "hum_frac_target_chem": pa.Column(float, nullable=True),
         "other_norm_name": pa.Column(str, nullable=True),
         "hum_frac_target_mic": pa.Column(str, nullable=True),
         "flow_rate": pa.Column(float, nullable=True),
         "pcr_target_avg_conc": pa.Column(float, nullable=True),
-        "pcr_target_below_lod": pa.Column(float, nullable=True),
-        "solids_separation": pa.Column(float, nullable=True),
-        "concentration_method": pa.Column(float, nullable=True),
-        "extraction_method": pa.Column(float, nullable=True),
-        "rec_eff_target_name": pa.Column(float, nullable=True),
-        "rec_eff_spike_matrix": pa.Column(float, nullable=True),
-        "pasteurized": pa.Column(float, nullable=True),
-        "pcr_type": pa.Column(float, nullable=True),
-        "quant_stan_type": pa.Column(float, nullable=True),
+        "pcr_target_below_lod": pa.Column(str, nullable=True),
+        "solids_separation": pa.Column(str, nullable=True),
+        "concentration_method": pa.Column(str, nullable=True),
+        "extraction_method": pa.Column(str, nullable=True),
+        "rec_eff_target_name": pa.Column(str, nullable=True),
+        "rec_eff_spike_matrix": pa.Column(str, nullable=True),
+        "pasteurized": pa.Column(str, nullable=True),
+        "pcr_type": pa.Column(str, nullable=True),
+        "quant_stan_type": pa.Column(str, nullable=True),
         "pcr_target_units": pa.Column(str, nullable=True),
-        "quality_flag": pa.Column(float, nullable=True),
+        "quality_flag": pa.Column(str, nullable=True),
         "collection_storage_temp": pa.Column(float, nullable=True),
         "collection_storage_time": pa.Column(float, nullable=True),
         "pre_conc_storage_temp": pa.Column(float, nullable=True),
@@ -268,7 +268,7 @@ load_schema = pa.DataFrameSchema(
         "pre_ext_storage_temp": pa.Column(float, nullable=True),
         "pre_ext_storage_time": pa.Column(float, nullable=True),
         "sample_collect_time": pa.Column(float, nullable=True),
-        "time_zone": pa.Column(float, nullable=True),
+        "time_zone": pa.Column(str, nullable=True),
         "collection_water_temp": pa.Column(float, nullable=True),
         "tot_conc_vol": pa.Column(float, nullable=True),
         "ext_blank": pa.Column(float, nullable=True),
@@ -297,9 +297,9 @@ load_schema = pa.DataFrameSchema(
         "quin_flowpop_bin": pa.Column(float, nullable=True),
         "perc_mic": pa.Column(float, nullable=True),
         "quin_mic_bin": pa.Column(float, nullable=True),
-        "major_lab_method": pa.Column(float, nullable=True),
-        "site_id": pa.Column(float, nullable=True),
-        "jurisdiction_policy_rid": pa.Column(float, nullable=True),
+        "major_lab_method": pa.Column(str, nullable=True),
+        "site_id": pa.Column(int, nullable=True),
+        "jurisdiction_policy_rid": pa.Column(str, nullable=True),
     }
 )
 
@@ -457,7 +457,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
             random.uniform(0, 1) for _ in range(size)
         ],
         "pcr_target_detect": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(["Yes", "No"]) for _ in range(size)
         ],
         "hum_frac_mic_conc": [random.uniform(0, 1) for _ in range(size)],
         "hum_frac_mic_unit": [
@@ -472,37 +472,81 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
             random.choice(["mg/L", "µg/L"]) for _ in range(size)
         ],
         "lod_sewage": [random.uniform(0, 1) for _ in range(size)],
-        "pcr_target": [random.choice(["yes", "no"]) for _ in range(size)],
+        "pcr_target": [
+            random.choice(["sars-cov-2", "omicron", "delta"])
+            for _ in range(size)
+        ],
         "pcr_gene_target_agg": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(
+                [
+                    "n2",
+                    "cdc n1 (gt-digital)",
+                    "n2 and n1",
+                    "n",
+                    "n1",
+                    "n2 and n and n1",
+                    "n3",
+                ]
+            )
+            for _ in range(size)
         ],
         "inhibition_detect": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(["Yes", "No", "Not Tested"]) for _ in range(size)
         ],
         "inhibition_adjust": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(["Yes", "No"]) for _ in range(size)
         ],
         "hum_frac_target_chem": [random.uniform(0, 1) for _ in range(size)],
         "other_norm_name": [
             random.choice(["name1", "name2"]) for _ in range(size)
         ],
-        "hum_frac_target_mic": [random.uniform(0, 1) for _ in range(size)],
+        "hum_frac_target_mic": [
+            random.choice(
+                [
+                    "pepper mild mottle virus",
+                    "pmmov (gt-digital)",
+                    ".",
+                    "f+ rna coliphage",
+                    "crassphage",
+                    "hf183",
+                    "pmmov",
+                    "#value!",
+                ]
+            )
+            for _ in range(size)
+        ],
         "flow_rate": [random.uniform(0, 1) for _ in range(size)],
         "pcr_target_avg_conc": [random.uniform(0, 1) for _ in range(size)],
         "pcr_target_below_lod": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(["Yes", "No"]) for _ in range(size)
         ],
         "solids_separation": [
-            random.choice(["yes", "no"]) for _ in range(size)
+            random.choice(["Yes", "No"]) for _ in range(size)
         ],
         "concentration_method": [
-            random.choice(["method1", "method2"]) for _ in range(size)
+            random.choice(
+                [
+                    "ceres nanotrap",
+                    "innovaprep ultrafiltration",
+                    "membrane filtration with no amendment",
+                ]
+            )
+            for _ in range(size)
         ],
         "extraction_method": [
-            random.choice(["method1", "method2"]) for _ in range(size)
+            random.choice(
+                [
+                    "nuclisens manual magnetic bead extraction kit",
+                    "qiagen qiaamp buffers with epoch columns",
+                ]
+            )
+            for _ in range(size)
         ],
         "rec_eff_target_name": [
-            random.choice(["name1", "name2"]) for _ in range(size)
+            random.choice(
+                ["heat inactivated sars-cov-2 virus", "puro", "ms2 coliphag"]
+            )
+            for _ in range(size)
         ],
         "rec_eff_spike_matrix": [
             random.choice(["matrix1", "matrix2"]) for _ in range(size)
@@ -515,9 +559,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "pcr_target_units": [
             random.choice(["unit1", "unit2"]) for _ in range(size)
         ],
-        "quality_flag": [
-            random.choice(["flag1", "flag2"]) for _ in range(size)
-        ],
+        "quality_flag": [random.choice(["yes", "no"]) for _ in range(size)],
         "collection_storage_temp": [random.uniform(0, 1) for _ in range(size)],
         "collection_storage_time": [random.uniform(0, 1) for _ in range(size)],
         "pre_conc_storage_temp": [random.uniform(0, 1) for _ in range(size)],
@@ -526,7 +568,19 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "pre_ext_storage_time": [random.uniform(0, 1) for _ in range(size)],
         "sample_collect_time": [random.uniform(0, 1) for _ in range(size)],
         "time_zone": [
-            random.choice(["UTC", "PST", "EST"]) for _ in range(size)
+            random.choice(
+                [
+                    "utc-06:00",
+                    "utc-07:00",
+                    "utc-07:01",
+                    "utc-08:00",
+                    "utc-9",
+                    "utc-8",
+                    "utc-6",
+                    "utc-5",
+                ]
+            )
+            for _ in range(size)
         ],
         "collection_water_temp": [random.uniform(0, 1) for _ in range(size)],
         "tot_conc_vol": [random.uniform(0, 1) for _ in range(size)],
@@ -534,9 +588,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "num_no_target_control": [random.randint(0, 10) for _ in range(size)],
         "tss": [random.uniform(0, 1) for _ in range(size)],
         "ph": [random.uniform(0, 14) for _ in range(size)],
-        "composite_freq": [
-            random.choice(["daily", "weekly", "monthly"]) for _ in range(size)
-        ],
+        "composite_freq": [random.uniform(0, 100) for _ in range(size)],
         "pcr_target_avg_conc_log10": [
             random.uniform(0, 1) for _ in range(size)
         ],
@@ -564,9 +616,7 @@ def load_mock_data(output="pandas", size=10) -> pd.DataFrame | pl.DataFrame:
         "quin_mic_bin": [random.choice(["yes", "no"]) for _ in range(size)],
         "major_lab_method": [random.choice(["1", "5"]) for _ in range(size)],
         "site_id": [random.randint(1, 100) for _ in range(size)],
-        "jurisdiction_policy_rid": [
-            random.randint(1, 100) for _ in range(size)
-        ],
+        "jurisdiction_policy_rid": [fake.uuid4() for _ in range(size)],
     }
     df = pd.DataFrame(data)
     return df if output == "pandas" or output == "pd" else pl.from_pandas(df)

@@ -67,11 +67,13 @@ load_schema = pa.DataFrameSchema(
             object,
             pa.Check(lambda x: pd.to_datetime(x, errors="coerce").notna()),
             nullable=True,
+            coerce=True,
         ),  # Check if start_date can be converted to datetime
         "end_date": pa.Column(
             object,
             pa.Check(lambda x: pd.to_datetime(x, errors="coerce").notna()),
             nullable=True,
+            coerce=True,
         ),  # Check if end_date can be converted to datetime
         "disease": pa.Column(
             str, pa.Check.isin(["COVID-19", "Influenza", "RSV"])
@@ -88,6 +90,7 @@ load_schema = pa.DataFrameSchema(
             object,
             pa.Check(lambda x: pd.to_datetime(x, errors="coerce").notna()),
             nullable=True,
+            coerce=True,
         ),
         "value": pa.Column(
             object,
