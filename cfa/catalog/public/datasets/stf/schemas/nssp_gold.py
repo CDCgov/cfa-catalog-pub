@@ -3,9 +3,6 @@ import random
 import pandas as pd
 import pandera.pandas as pa
 import polars as pl
-from faker import Faker
-
-fake = Faker()
 
 metric_opts = [
     "count_ed_visits",
