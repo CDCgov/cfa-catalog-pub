@@ -2,23 +2,25 @@ import os
 
 import duckdb
 import polars as pl
+from comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
 
 from cfa.cloudops import CloudClient
-from comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
 
 
 def get_auth() -> dict:
     """Get authentication information."""
-    cc = CloudClient(keyvault = "cfa-predict")
+    cc = CloudClient(keyvault="cfa-predict")
     tenant_id = cc.cred.azure_tenant_id
     client_id = cc.cred.azure_client_id
-    client_secret = cc.get_kv_secret(secret_name  = cc.cred.azure_keyvault_sp_secret_id, keyvault = "cfa-predict")
+    client_secret = cc.get_kv_secret(
+        secret_name=cc.cred.azure_keyvault_sp_secret_id, keyvault="cfa-predict"
+    )
     storage_account_name = cc.cred.azure_blob_storage_account
     if None in [tenant_id, client_id, client_secret, storage_account_name]:
         raise ValueError(
             "Missing required environment variables for Azure Blob Storage connection."
         )
-    #save to env variables for SP login
+    # save to env variables for SP login
     os.environ["AZURE_TENANT_ID"] = tenant_id
     os.environ["AZURE_CLIENT_ID"] = client_id
     os.environ["AZURE_CLIENT_SECRET"] = client_secret
@@ -50,6 +52,7 @@ def setup_duckdb() -> None:
         );"
     )
 
+
 def update_latest_comprehensive() -> pl.DataFrame:
     """Update latest comprehensive NSSP ED visit data."""
     all_gold_modern_path = AZURE_CONSTANTS["all_gold_path"]
@@ -74,7 +77,8 @@ def update_latest_comprehensive() -> pl.DataFrame:
         # the current highest report_date into one row per reference_date
 
         full_path = [
-            f"{all_gold_modern_path}{date}.parquet" for date in latest_gold_dates
+            f"{all_gold_modern_path}{date}.parquet"
+            for date in latest_gold_dates
         ]
         comprehensive_for_dates = duckdb.sql(
             f"""

@@ -2,12 +2,18 @@ from datetime import datetime
 from types import SimpleNamespace
 
 import polars as pl
-import duckdb
-
-from utils.comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_archival_path, upload_latest_df_to_azure
+from tqdm import tqdm
+from utils.comp_nssp_azure_utils import (
+    upload_latest_df_to_azure,
+)
 from utils.comp_nssp_duckdb_utils import setup_duckdb
+from utils.comp_nssp_version_utils import (
+    clear_azure_credentials,
+    get_all_gold_dates,
+    get_gold_dates_before_ref,
+    get_latest_comprehensive_for_date,
+)
 
-from cfa.cloudops.blob_helpers import read_blob_stream
 from cfa.dataops import datacat
 
 dataset = datacat.public.stf.comprehensive_nssp_gold
@@ -15,13 +21,13 @@ source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 
 
 def create_latest_comprehensive() -> pl.DataFrame:
-    #try setting up duckdb
+    # try setting up duckdb
     try:
         setup_duckdb()
     except Exception as e1:
         raise RuntimeError(f"Failed to set up DuckDB connection: {e1}")
-    
-    #try updating latest_comprehensive dataset
+
+    # try updating latest_comprehensive dataset
     try:
         comprehensive_df = update_latest_comprehensive()
         if comprehensive_df.is_empty():
@@ -29,23 +35,43 @@ def create_latest_comprehensive() -> pl.DataFrame:
         upload_latest_df_to_azure(comprehensive_df)
         return comprehensive_df
     except Exception as e2:
-        raise RuntimeError(f"Error processing latest comprehensive NSSP ED visit data: {e2}")
-    
+        raise RuntimeError(
+            f"Error processing latest comprehensive NSSP ED visit data: {e2}"
+        )
 
-def generate_full_dataset() -> None:
-    return None
 
-def copy_file(df: pl.DataFrame) -> None:
-    date = datetime.now().isoformat().split("T")[0]
+def copy_file(df: pl.DataFrame, date: str | None = None) -> None:
+    if date is None:
+        date = datetime.now().isoformat().split("T")[0]
     dataset.load.save_dataframe(
         df,
         path_after_prefix=f"{date}/data.parquet",
     )
 
+
+# this functiion can backfill the comprehensive dataset based on all nssp gold dates
+def generate_versioned_dataset() -> None:
+    # get all available gold dates and existing versions in the data catalog
+    versions = dataset.load.get_versions()
+    gold_dates_sort = get_all_gold_dates()
+    # test with first 5 dates for now to make sure the process works before running on all dates
+    for ref_date in tqdm(gold_dates_sort[0:5]):
+        if (
+            ref_date not in versions
+        ):  # only generate comprehensive dataset for dates that don't already have a version in the data catalog
+            dates_available = get_gold_dates_before_ref(
+                ref_date, gold_dates_sort
+            )
+            df = get_latest_comprehensive_for_date(dates_available)
+            clear_azure_credentials()
+            copy_file(df, ref_date)
+    return None
+
+
 def update_latest_comprehensive() -> None:
-    #create the latest comprehensive dataset
+    # create the latest comprehensive dataset
     latest_comprehensive_df = create_latest_comprehensive()
-    #upload the latest comprehensive dataset to Azure Blob Storage
+    # upload the latest comprehensive dataset to Azure Blob Storage
     upload_latest_df_to_azure(latest_comprehensive_df)
-    #copy the dataset to the versioned path in the data catalog
+    # copy the dataset to the versioned path in the data catalog
     copy_file(latest_comprehensive_df)

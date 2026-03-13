@@ -1,11 +1,11 @@
 import logging
 from io import BytesIO
 from types import SimpleNamespace
+
 import polars as pl
 from azure.identity import EnvironmentCredential
 from azure.storage.blob import BlobServiceClient
-from datetime import datetime
-from tomlkit import date
+
 from cfa.dataops import datacat
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,9 @@ def instantiate_blob_service_client(
     if not sp_credential:
         raise ValueError("Service principal credential not provided.")
 
-    blob_service_client = BlobServiceClient(account_url, credential=sp_credential)
+    blob_service_client = BlobServiceClient(
+        account_url, credential=sp_credential
+    )
 
     return blob_service_client
 
@@ -86,7 +88,9 @@ def get_latest_archival_path() -> dict[str, str]:
 
     latest_vintage = max(all_archival_paths)
     latest_vintage_date = latest_vintage.replace(".parquet", "")
-    latest_vintage_full_path = f"az://{gold_archival_container}/gold/{latest_vintage}"
+    latest_vintage_full_path = (
+        f"az://{gold_archival_container}/gold/{latest_vintage}"
+    )
     return {
         "latest_vintage_date": latest_vintage_date,
         "latest_vintage_full_path": latest_vintage_full_path,
@@ -105,7 +109,9 @@ def get_latest_gold_dates(ref_date: str) -> list[str]:
         sp_credential=sp_credential,
         account_url=AZURE_CONSTANTS["storage_account_url"],
     )
-    container_client = storage_client.get_container_client(container="nssp-etl")
+    container_client = storage_client.get_container_client(
+        container="nssp-etl"
+    )
     latest_gold_dates = []
     for blob in container_client.list_blobs(name_starts_with="gold/"):
         clean_name = blob.name.replace("gold/", "").replace(".parquet", "")
@@ -115,7 +121,9 @@ def get_latest_gold_dates(ref_date: str) -> list[str]:
     return latest_gold_dates
 
 
-def upload_latest_df_to_azure(df: pl.DataFrame, alternate_output_filename: str = "") -> None:
+def upload_latest_df_to_azure(
+    df: pl.DataFrame, alternate_output_filename: str = ""
+) -> None:
     """
     Uploads a DataFrame to Azure Blob Storage in parquet format.
     Args:
