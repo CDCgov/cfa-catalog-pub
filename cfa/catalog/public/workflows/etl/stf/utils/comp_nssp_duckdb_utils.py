@@ -2,7 +2,7 @@ import os
 
 import duckdb
 import polars as pl
-from comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
+from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
 
 from cfa.cloudops import CloudClient
 
