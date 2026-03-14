@@ -49,7 +49,7 @@ def copy_file(df: pl.DataFrame, date: str | None = None) -> None:
     )
 
 
-# this functiion can backfill the comprehensive dataset based on all nssp gold dates
+# this function can backfill the comprehensive dataset based on all nssp gold dates
 def generate_versioned_dataset() -> None:
     # get all available gold dates and existing versions in the data catalog
     versions = dataset.load.get_versions()
