@@ -1,8 +1,8 @@
 import logging
 import os
 import duckdb
-from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_archival_path, obtain_sp_credential, instantiate_blob_service_client
-from .comp_nssp_duckdb_utils import get_auth, setup_duckdb, get_latest_gold_dates, get_latest_comprehensive_for_date
+from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_archival_path, obtain_sp_credential, instantiate_blob_service_client, get_latest_gold_dates
+from .comp_nssp_duckdb_utils import get_auth, setup_duckdb
 logger = logging.getLogger(__name__)
 
 # gets the file names to use in the query based on ref date and all dates less than or equal to ref date
