@@ -84,7 +84,8 @@ def get_latest_archival_path() -> dict[str, str]:
     )
     all_archival_paths = []
     for blob in container_client.list_blobs(name_starts_with="gold/"):
-        all_archival_paths.append(blob.name.replace("gold/", ""))
+        if blob.name.endswith(".parquet"):
+            all_archival_paths.append(blob.name.replace("gold/", ""))
 
     latest_vintage = max(all_archival_paths)
     latest_vintage_date = latest_vintage.replace(".parquet", "")
