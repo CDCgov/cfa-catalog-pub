@@ -77,5 +77,6 @@ def update_latest_comprehensive() -> None:
     # create the latest comprehensive dataset
     latest_comprehensive_df = create_latest_comprehensive()
     # copy the dataset to the versioned path in the data catalog
+    clear_azure_credentials()
     copy_file(latest_comprehensive_df)
     return None
