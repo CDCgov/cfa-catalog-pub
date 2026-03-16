@@ -3,18 +3,22 @@ from types import SimpleNamespace
 
 import polars as pl
 from tqdm import tqdm
-from utils.comp_nssp_azure_utils import (
+
+from cfa.dataops import datacat
+
+from .utils.comp_nssp_azure_utils import (
     upload_latest_df_to_azure,
 )
-from utils.comp_nssp_duckdb_utils import get_latest_comprehensive, setup_duckdb
-from utils.comp_nssp_version_utils import (
+from .utils.comp_nssp_duckdb_utils import (
+    get_latest_comprehensive,
+    setup_duckdb,
+)
+from .utils.comp_nssp_version_utils import (
     clear_azure_credentials,
     get_all_gold_dates,
     get_gold_dates_before_ref,
     get_latest_comprehensive_for_date,
 )
-
-from cfa.dataops import datacat
 
 dataset = datacat.public.stf.comprehensive_nssp_gold
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
