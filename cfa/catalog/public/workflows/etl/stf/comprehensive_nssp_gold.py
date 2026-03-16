@@ -63,6 +63,7 @@ def generate_versioned_dataset() -> None:
         if (
             ref_date not in versions
         ):  # only generate comprehensive dataset for dates that don't already have a version in the data catalog
+            print(f"Generating comprehensive dataset for {ref_date}...")
             dates_available = get_gold_dates_before_ref(
                 ref_date, gold_dates_sort
             )

@@ -25,10 +25,10 @@ def get_gold_dates_before_ref(
 
 # run the query to get the latest comprehensive dataset for the files passed in
 def get_latest_comprehensive_for_date(files):
+    setup_duckdb()
     latest_archival_path = get_latest_archival_path()[
         "latest_vintage_full_path"
     ]
-    setup_duckdb()
     comprehensive_df = duckdb.sql(
         f"""
             WITH latest_report_dates AS
