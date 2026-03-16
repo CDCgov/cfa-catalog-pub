@@ -2,9 +2,10 @@ import os
 
 import duckdb
 import polars as pl
-from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
 
 from cfa.cloudops import CloudClient
+
+from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_gold_dates
 
 
 def get_auth() -> dict:
@@ -53,7 +54,7 @@ def setup_duckdb() -> None:
     )
 
 
-def update_latest_comprehensive() -> pl.DataFrame:
+def get_latest_comprehensive() -> pl.DataFrame:
     """Update latest comprehensive NSSP ED visit data."""
     all_gold_modern_path = AZURE_CONSTANTS["all_gold_path"]
     latest_comprehensive_path = AZURE_CONSTANTS["latest_comprehensive_path"]

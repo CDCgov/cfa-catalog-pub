@@ -6,7 +6,7 @@ from tqdm import tqdm
 from utils.comp_nssp_azure_utils import (
     upload_latest_df_to_azure,
 )
-from utils.comp_nssp_duckdb_utils import setup_duckdb
+from utils.comp_nssp_duckdb_utils import get_latest_comprehensive, setup_duckdb
 from utils.comp_nssp_version_utils import (
     clear_azure_credentials,
     get_all_gold_dates,
@@ -29,7 +29,7 @@ def create_latest_comprehensive() -> pl.DataFrame:
 
     # try updating latest_comprehensive dataset
     try:
-        comprehensive_df = update_latest_comprehensive()
+        comprehensive_df = get_latest_comprehensive()
         if comprehensive_df.is_empty():
             raise ValueError("The resulting comprehensive DataFrame is empty.")
         upload_latest_df_to_azure(comprehensive_df)
@@ -71,7 +71,6 @@ def generate_versioned_dataset() -> None:
 def update_latest_comprehensive() -> None:
     # create the latest comprehensive dataset
     latest_comprehensive_df = create_latest_comprehensive()
-    # upload the latest comprehensive dataset to Azure Blob Storage
-    upload_latest_df_to_azure(latest_comprehensive_df)
     # copy the dataset to the versioned path in the data catalog
     copy_file(latest_comprehensive_df)
+    return None

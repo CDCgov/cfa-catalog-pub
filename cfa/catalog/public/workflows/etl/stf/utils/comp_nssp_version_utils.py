@@ -1,19 +1,33 @@
 import logging
 import os
+
 import duckdb
-from .comp_nssp_azure_utils import AZURE_CONSTANTS, get_latest_archival_path, obtain_sp_credential, instantiate_blob_service_client, get_latest_gold_dates
-from .comp_nssp_duckdb_utils import get_auth, setup_duckdb
+
+from .comp_nssp_azure_utils import (
+    AZURE_CONSTANTS,
+    get_latest_archival_path,
+    instantiate_blob_service_client,
+    obtain_sp_credential,
+)
+from .comp_nssp_duckdb_utils import setup_duckdb
+
 logger = logging.getLogger(__name__)
 
+
 # gets the file names to use in the query based on ref date and all dates less than or equal to ref date
-def get_gold_dates_before_ref(ref_date: str, all_dates: list[str]) -> list[str]:
+def get_gold_dates_before_ref(
+    ref_date: str, all_dates: list[str]
+) -> list[str]:
     dates_available = [date for date in all_dates if date <= ref_date]
     files = [f"az://nssp-etl/gold/{date}.parquet" for date in dates_available]
     return files
 
+
 # run the query to get the latest comprehensive dataset for the files passed in
 def get_latest_comprehensive_for_date(files):
-    latest_archival_path = get_latest_archival_path()["latest_vintage_full_path"]
+    latest_archival_path = get_latest_archival_path()[
+        "latest_vintage_full_path"
+    ]
     setup_duckdb()
     comprehensive_df = duckdb.sql(
         f"""
@@ -65,6 +79,7 @@ def get_latest_comprehensive_for_date(files):
     ).pl()
     return comprehensive_df
 
+
 # gets all available nssp gold dates
 def get_all_gold_dates():
     setup_duckdb()
@@ -80,17 +95,21 @@ def get_all_gold_dates():
     all_gold_paths = []
     for blob in container_client.list_blobs(name_starts_with="gold/"):
         all_gold_paths.append(blob.name.replace("gold/", ""))
-        
-    gold_dates = [file.replace("gold/", "").replace(".parquet", "") for file in all_gold_paths if file.endswith(".parquet")]
+
+    gold_dates = [
+        file.replace("gold/", "").replace(".parquet", "")
+        for file in all_gold_paths
+        if file.endswith(".parquet")
+    ]
     gold_dates_sort = sorted(gold_dates)
     return gold_dates_sort
 
+
 # clears azure credentials from environment variables before uploading to avoid credential mismatches
 def clear_azure_credentials():
-    if 'AZURE_TENANT_ID' in os.environ:
-        del os.environ['AZURE_TENANT_ID']
-    if 'AZURE_CLIENT_SECRET' in os.environ:
-        del os.environ['AZURE_CLIENT_SECRET']
-    if 'AZURE_CLIENT_ID' in os.environ:
-        del os.environ['AZURE_CLIENT_ID']
-
+    if "AZURE_TENANT_ID" in os.environ:
+        del os.environ["AZURE_TENANT_ID"]
+    if "AZURE_CLIENT_SECRET" in os.environ:
+        del os.environ["AZURE_CLIENT_SECRET"]
+    if "AZURE_CLIENT_ID" in os.environ:
+        del os.environ["AZURE_CLIENT_ID"]
