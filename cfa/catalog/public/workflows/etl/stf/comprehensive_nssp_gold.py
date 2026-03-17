@@ -59,7 +59,7 @@ def generate_versioned_dataset() -> None:
     versions = dataset.load.get_versions()
     gold_dates_sort = get_all_gold_dates()
     # test with first 5 dates for now to make sure the process works before running on all dates
-    for ref_date in tqdm(gold_dates_sort[0:5]):
+    for ref_date in tqdm(gold_dates_sort[0:20]):
         if (
             ref_date not in versions
         ):  # only generate comprehensive dataset for dates that don't already have a version in the data catalog
