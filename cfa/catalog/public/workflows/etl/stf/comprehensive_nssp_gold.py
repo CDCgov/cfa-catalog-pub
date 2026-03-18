@@ -58,18 +58,15 @@ def generate_versioned_dataset() -> None:
     # get all available gold dates and existing versions in the data catalog
     versions = dataset.load.get_versions()
     gold_dates_sort = get_all_gold_dates()
-    # test with first 5 dates for now to make sure the process works before running on all dates
-    for ref_date in tqdm(gold_dates_sort):
-        if (
-            ref_date not in versions
-        ):  # only generate comprehensive dataset for dates that don't already have a version in the data catalog
-            print(f"Generating comprehensive dataset for {ref_date}...")
-            dates_available = get_gold_dates_before_ref(
-                ref_date, gold_dates_sort
-            )
-            df = get_latest_comprehensive_for_date(dates_available)
-            clear_azure_credentials()
-            copy_file(df, ref_date)
+    # get final list to run
+    date_list = [date for date in gold_dates_sort if date not in versions]
+    # get data for missing versions and upload
+    for ref_date in tqdm(date_list):
+        print(f"Generating comprehensive dataset for {ref_date}...")
+        dates_available = get_gold_dates_before_ref(ref_date, gold_dates_sort)
+        df = get_latest_comprehensive_for_date(dates_available)
+        clear_azure_credentials()
+        copy_file(df, ref_date)
     return None
 
 
