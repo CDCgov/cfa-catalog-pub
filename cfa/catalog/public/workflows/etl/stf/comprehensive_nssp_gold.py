@@ -6,13 +6,6 @@ from tqdm import tqdm
 
 from cfa.dataops import datacat
 
-from .utils.comp_nssp_azure_utils import (
-    upload_latest_df_to_azure,
-)
-from .utils.comp_nssp_duckdb_utils import (
-    get_latest_comprehensive,
-    setup_duckdb,
-)
 from .utils.comp_nssp_version_utils import (
     clear_azure_credentials,
     get_all_gold_dates,
@@ -22,26 +15,6 @@ from .utils.comp_nssp_version_utils import (
 
 dataset = datacat.public.stf.comprehensive_nssp_gold
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
-
-
-def create_latest_comprehensive() -> pl.DataFrame:
-    # try setting up duckdb
-    try:
-        setup_duckdb()
-    except Exception as e1:
-        raise RuntimeError(f"Failed to set up DuckDB connection: {e1}")
-
-    # try updating latest_comprehensive dataset
-    try:
-        comprehensive_df = get_latest_comprehensive()
-        if comprehensive_df.is_empty():
-            raise ValueError("The resulting comprehensive DataFrame is empty.")
-        upload_latest_df_to_azure(comprehensive_df)
-        return comprehensive_df
-    except Exception as e2:
-        raise RuntimeError(
-            f"Error processing latest comprehensive NSSP ED visit data: {e2}"
-        )
 
 
 def copy_file(df: pl.DataFrame, date: str | None = None) -> None:
@@ -67,13 +40,4 @@ def generate_versioned_dataset() -> None:
         df = get_latest_comprehensive_for_date(dates_available)
         clear_azure_credentials()
         copy_file(df, ref_date)
-    return None
-
-
-def update_latest_comprehensive() -> None:
-    # create the latest comprehensive dataset
-    latest_comprehensive_df = create_latest_comprehensive()
-    # copy the dataset to the versioned path in the data catalog
-    clear_azure_credentials()
-    copy_file(latest_comprehensive_df)
     return None

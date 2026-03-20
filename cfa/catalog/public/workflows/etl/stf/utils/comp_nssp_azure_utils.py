@@ -1,8 +1,6 @@
 import logging
-from io import BytesIO
 from types import SimpleNamespace
 
-import polars as pl
 from azure.identity import EnvironmentCredential
 from azure.storage.blob import BlobServiceClient
 
@@ -96,69 +94,3 @@ def get_latest_archival_path() -> dict[str, str]:
         "latest_vintage_date": latest_vintage_date,
         "latest_vintage_full_path": latest_vintage_full_path,
     }
-
-
-def get_latest_gold_dates(ref_date: str) -> list[str]:
-    """Get the latest gold dates after a given report date.
-    Args:
-        ref_date (str): Report date in ISO format.
-    Returns:
-        list[str]: List of paths to the latest gold files.
-    """
-    sp_credential = obtain_sp_credential()
-    storage_client = instantiate_blob_service_client(
-        sp_credential=sp_credential,
-        account_url=AZURE_CONSTANTS["storage_account_url"],
-    )
-    container_client = storage_client.get_container_client(
-        container="nssp-etl"
-    )
-    latest_gold_dates = []
-    for blob in container_client.list_blobs(name_starts_with="gold/"):
-        clean_name = blob.name.replace("gold/", "").replace(".parquet", "")
-        if clean_name >= ref_date:
-            latest_gold_dates.append(clean_name)
-
-    return latest_gold_dates
-
-
-def upload_latest_df_to_azure(
-    df: pl.DataFrame, alternate_output_filename: str = ""
-) -> None:
-    """
-    Uploads a DataFrame to Azure Blob Storage in parquet format.
-    Args:
-        df (DataFrame): DataFrame to upload.
-        alternate_output_filename (str): Optional alternate filename for the uploaded parquet file.
-    """
-
-    # DuckDB does not support writing to Azure Blob Storage directly.
-    # So we write the dataframe to parquet in a buffer of bytes, and
-    # write the bytes to Azure Blob Storage.
-    # See: https://stackoverflow.com/a/68717897
-
-    try:
-        sp_credential = obtain_sp_credential()
-        storage_client = instantiate_blob_service_client(
-            sp_credential=sp_credential,
-            account_url=AZURE_CONSTANTS["storage_account_url"],
-        )
-        container_client = storage_client.get_container_client(
-            container=AZURE_CONSTANTS["nssp_etl_container"]
-        )
-        parquet_stream = BytesIO()
-        df.write_parquet(parquet_stream)
-        # change the stream position back to the beginning after writing
-        parquet_stream.seek(0)
-        blob_name = AZURE_CONSTANTS["output_filename"]
-        if alternate_output_filename != "":
-            # If an alternate output filename is provided, use it instead
-            # of the default output filename.
-            # This is useful for testing purposes.
-            blob_name = alternate_output_filename
-        container_client.upload_blob(
-            name=blob_name, data=parquet_stream, overwrite=True
-        )
-    except Exception as e:
-        logger.error(f"Error uploading DataFrame to Azure Blob Storage: {e}")
-        raise e
