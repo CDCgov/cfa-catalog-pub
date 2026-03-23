@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import polars as pl
 from tqdm import tqdm
 
+from cfa.cloudops.blob_helpers import read_blob_stream
 from cfa.dataops import datacat
 
 from .utils.comp_nssp_version_utils import (
@@ -15,9 +16,18 @@ from .utils.comp_nssp_version_utils import (
 
 dataset = datacat.public.stf.comprehensive_nssp_gold
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
+file_to_copy = "latest_comprehensive.parquet"
 
 
-def copy_file(df: pl.DataFrame, date: str | None = None) -> None:
+def copy_file(df: pl.DataFrame | None, date: str | None = None) -> None:
+    if df is None:
+        df = pl.read_parquet(
+            read_blob_stream(
+                account_name=source_blob.account,
+                container_name=source_blob.container,
+                blob_url=file_to_copy,
+            ).content_as_bytes()
+        )
     if date is None:
         date = datetime.now().isoformat().split("T")[0]
     dataset.load.save_dataframe(
