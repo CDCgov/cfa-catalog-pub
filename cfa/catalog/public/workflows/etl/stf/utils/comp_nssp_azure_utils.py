@@ -16,10 +16,7 @@ container = source_blob.container
 
 AZURE_CONSTANTS = {
     "storage_account_url": f"https://{account}.blob.core.windows.net/",
-    "output_filename": "stf_latest_comprehensive.parquet",
-    "all_gold_path": f"az://{container}/gold/",
     "gold_archival_container": "nssp-archival-vintages",
-    "latest_comprehensive_path": f"az://{container}/latest_comprehensive.parquet",
     "nssp_etl_container": "nssp-etl",
 }
 

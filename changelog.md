@@ -11,7 +11,7 @@ The versioning pattern is `YYYY.MM.DD.micro
 
 ## Added
 
-- add comprehensive nssp gold (namechange) and backfill vintage data function
+- add comprehensive nssp gold (name change) and backfill vintage data function
 
 # [2026.03.05.0]
 
