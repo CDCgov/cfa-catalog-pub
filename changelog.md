@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.03.23.0]
+
+## Added
+
+- add comprehensive nssp gold (name change) and backfill vintage data function
+
 # [2026.03.05.0]
 
 ## Added

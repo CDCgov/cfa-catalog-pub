@@ -6,7 +6,7 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "nssp_latest_comprehensive"
+name = "comprehensive_nssp_gold"
 type = "reference"
 
 ############################################################################
@@ -25,10 +25,11 @@ storage_location.container = "nssp-etl"
 
 account = "" # use default
 container = "" # use default
-prefix = "dataops/stf/transformed/nssp_latest_comprehensive/"
+prefix = "dataops/stf/transformed/comprehensive_nssp_gold/"
 
 ############################################################################
 
 # Changelog
 # ---------
 # 2026-03-04: Initial version created by Ryan Raasch (xng3)
+# 2026-03-09: Changed name to comprehensive_nssp_gold
