@@ -51,3 +51,8 @@ def generate_versioned_dataset() -> None:
         clear_azure_credentials()
         copy_file(df, ref_date)
     return None
+
+
+def transfer_data() -> None:
+    # move the vintage data from the prior load location to the new dagster location
+    return None
