@@ -34,8 +34,8 @@ prefix = "dataops/stf/transformed/comprehensive_nssp_gold/"
 # If not included or given an empty string, the defaults in the
 # catalog_defaults.toml will be used
 
-account = "cfadagster" # use default
-container = "cfadagster" # use default
+account = "cfadagster" # explicit target account
+container = "cfadagster" # explicit target container
 prefix = "dagster-files/prod/comprehensive_nssp_gold/"
 
 ############################################################################
