@@ -18,7 +18,7 @@ storage_location.container = "nssp-etl"
 
 ############################################################################
 
-[load]
+[prior_load]
 # These are the details of where to store the reference data.
 # If not included or given an empty string, the defaults in the
 # catalog_defaults.toml will be used
@@ -26,6 +26,17 @@ storage_location.container = "nssp-etl"
 account = "" # use default
 container = "" # use default
 prefix = "dataops/stf/transformed/comprehensive_nssp_gold/"
+
+############################################################################
+
+[load]
+# These are the details of where to store the reference data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = "cfadagster" # explicit target account
+container = "cfadagster" # explicit target container
+prefix = "dagster-files/prod/comprehensive_nssp_gold/"
 
 ############################################################################
 
