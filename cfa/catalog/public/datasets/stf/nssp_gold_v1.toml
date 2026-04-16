@@ -9,7 +9,7 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "nssp_gold"
+name = "nssp_gold_v1"
 type = "experiment"
 
 ############################################################################
@@ -22,7 +22,7 @@ storage_location.prefix = "gold/"
 
 ############################################################################
 
-[load]
+[prior_load]
 # These are the details of where to store the reference data.
 # If not included or given an empty string, the defaults in the
 # catalog_defaults.toml will be used
@@ -31,8 +31,14 @@ account = "" # use default
 container = "" # use default
 prefix = "dataops/public/stf/nssp_gold/"
 
+
+[load]
+account = "cfadagster"
+container = "cfadagster"
+prefix = "dagster-files/prod/nssp_gold_v1/"
+
 ############################################################################
 
 # Changelog
 # ---------
-# 2025-10-06: Initial version created by Phil Rogers (ap66)
+# 2026-04-14: change load location to dagster by Ryan Raasch (xng3)
