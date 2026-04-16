@@ -7,6 +7,15 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.04.16.0]
+
+## Changed
+- nssp_gold renamed to nssp_gold_v1
+- new load location in config for nssp_gold_v1
+
+## Added
+- nssp_gold_v2 dataset running in dagster
+
 # [2026.04.09.0]
 
 ## Added
