@@ -2,7 +2,10 @@
 
 ## Overview
 
-The CFA Catalog: Public (CDCgov) is a comprehensive data management and analysis platform designed for the CDC's Center for Forecasting and Analytics (CFA). This catalog provides a structured framework for managing datasets, workflows, modeling components, and reports related to public health data analysis and forecasting.
+The CFA Catalog: Public (CDCgov) is a comprehensive data management and analysis platform designed for the CDC's Center for Forecasting and Analytics (CFA). It serves as the organizational layer on top of the CFA dataOps framework, enabling teams to standardize how data assets are described, discovered, and used across projects. This catalog provides a structured framework for managing datasets, workflows, modeling components, and reports related to public health data analysis and forecasting.
+
+### How It Works
+The catalog is implemented as a collection of configuration-driven definitions that describe how datasets are ingested, transformed, validated, and exposed. Each dataset is defined using structured configuration (e.g. TOML), along with associated schema definitions and transformation logic.
 
 ### Key Components
 
@@ -35,6 +38,52 @@ The catalog is built on the `cfa-dataops` framework and provides:
   - `nssp_gold_v2`
   - `nwss`
   - `param_estimates`
+
+### How It Integrates with CFA DataOps
+The CFA Data Catalog is tightly coupled with the CFA DataOps framework and functions as its primary interface for dataset definition and discovery.
+
+CFA DataOps provides the execution layer, while the catalog provides the declaratie layer.
+
+  **CFA DataOps Responsibilities**
+  - Executes ETL pipelines defined in the catalog
+  - Manages schema validation and mock data generation
+  - Handles data versioning and storage in Azure Blob Storage
+  - Provides utilities for accessing datasets and APIs (e.g. Socrata)
+
+  **CFA Catalog Responsibilities**
+  - Defines dataset structure, transformations, adn schemas
+  - Organizes workflows and reporting artifacts
+  - Serves as the entry point for users interacting with data assets.
+
+In practice, this integration enables a configuration-driven workflow:
+  1.  A dataset is defined in the catalog with its schema and transformation logic.
+  2.  CFA DataOps reads the catalog definition and executes the corresponding pipeline.
+  3.  Data is validated, transformed, and stored in Azure Blob Storage with versioning.
+  4.  Downstream users access the dataset via standardized interfaces or generat reports using reportcat.
+
+Recent enhancements further strengthen this integration, including:
+  - LazyFrame loading in Polars for efficient data access without immediate materialization.
+  - Automated schema and mock data generation directly from catalog definitions.
+  - Migration toward Dagster for mor robust orchestration and scheduling.
+
+Together, the catalog and CFA DataOps create a unified system where daa engineering is reproducible, discoverable, and scalable.
+
+### Getting Started
+New users can begin working with CFA Data Catalog by following these steps:
+1. Explore the Catalog
+   Review available datasets, schemas, and workflows defined in the catalog repository.
+2. Access Data via CFA DataOps
+   Use CFA DataOps utilities to load datasets into your analysis environment. Data can be queried using DuckDB or Polars without requiring external database infrastructure.
+3. Run or Extend Pipelines
+   Execute existing ETL workflows or define new ones using catalog templates and configuration files.
+
+4. Validate and Test
+   Leverage built-in schema validation and mock data generation to ensure correctness during development
+
+5. Generate Outputs
+   Use parameterized notebooks to produce reports, dashboards, or model inputs in a reproducible manner.
+
+By adhering to catalog standards and leveraging CFA DataOps tooling, users can quickly onboard to existing data assets and contribute new datasets in a consistent, production-ready manner.
 
 ## Project admins
 
