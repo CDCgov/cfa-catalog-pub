@@ -1,16 +1,13 @@
 import os
-from io import BytesIO
 import tempfile
+from io import BytesIO
 from typing import Optional
 
+import nisapi
 import polars as pl
-
+from nisapi.clean import clean_dataset
 
 from cfa.dataops import datacat
-from cfa.dataops.soda import Query
-
-import nisapi
-from nisapi.clean import Validate, clean_dataset
 
 dataset = datacat.public.mcmv.covid_national_vax_adult_survey
 
@@ -40,15 +37,17 @@ def extract(
         id=dataset_id,
         app_token=app_token,
     )
-        
+
     dataset.extract.write_blob(
         file_buffer=raw, path_after_prefix="data.parquet", auto_version=True
     )
 
     return raw
 
+
 def transform(raw_df: pl.DataFrame) -> pl.DataFrame:
     return clean_dataset(raw_df.lazy(), dataset_id, clean_args, "warn")
+
 
 def load(data: pl.DataFrame) -> None:
     """
@@ -65,7 +64,8 @@ def load(data: pl.DataFrame) -> None:
         auto_version=True,
     )
     buffer.close()
-    
+
+
 def etl(app_token: Optional[str] = access_token) -> None:
     """Run the full ETL process: extract, transform, and load.
 
