@@ -9,13 +9,11 @@ from nisapi.clean import clean_dataset
 
 from cfa.dataops import datacat
 
-dataset = datacat.public.mcmv.covid_survey_resp_vax_view
+dataset = datacat.public.mcmv.flu_vax_weekly
 
 access_token = os.getenv("NIS_APP_TOKEN", None)
 
 dataset_id = dataset.config["source"]["id"]
-
-td = tempfile.TemporaryDirectory()
 
 clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
 
@@ -51,7 +49,8 @@ def extract(
 
 
 def transform(raw_df: pl.DataFrame) -> pl.DataFrame:
-    return clean_dataset(raw_df.lazy(), dataset_id, clean_args, "warn")
+    df = raw_df.with_columns(pl.col("week_ending").str.slice(0, 10))
+    return clean_dataset(df.lazy(), dataset_id, clean_args, "warn")
 
 
 def load(data: pl.DataFrame) -> None:
