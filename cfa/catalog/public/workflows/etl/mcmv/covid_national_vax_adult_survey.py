@@ -37,10 +37,10 @@ def extract(
         id=dataset_id,
         app_token=app_token,
     )
-    buffer = raw.write_ipc(None)
-
     dataset.extract.write_blob(
-        file_buffer=buffer, path_after_prefix="data.parquet", auto_version=True
+        file_buffer=bytes(raw, "utf-8"),
+        path_after_prefix="data.parquet",
+        auto_version=True,
     )
 
     return raw
