@@ -9,7 +9,7 @@ from nisapi.clean import clean_dataset
 
 from cfa.dataops import datacat
 
-dataset = datacat.public.mcmv.covid_national_vax_adult_survey
+dataset = datacat.public.mcmv.covid_survey_trends_and_intent
 
 access_token = os.getenv("NIS_APP_TOKEN", None)
 

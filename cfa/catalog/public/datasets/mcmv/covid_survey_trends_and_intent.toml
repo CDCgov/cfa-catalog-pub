@@ -1,6 +1,6 @@
-# This dataset config is for weekly pulls of the Weekly Cumulative Covid
-# Vaccination Coverage from data.cdc.gov.
-# 'https://data.cdc.gov/Vaccinations/Weekly-Cumulative-COVID-19-Vaccination-Coverage-an/ksfb-ug5d/about_data'
+# This dataset config is for weekly pulls of the National Immunization
+# Survey Adult COVID Module: Trends and Intent  dataset on data.cdc.gov
+# https://data.cdc.gov/Vaccinations/National-Immunization-Survey-Adult-COVID-Module-NI/akkj-j5ru/about_data'
 
 ############################################################################
 
@@ -8,15 +8,19 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "covid_vax_weekly_cumulative"
+name = "covid_survey_trends_and_intent"
+automate = false
 type = "etl"
 
 ############################################################################
 
 [source]
+# These source fields are open to being changed based on the source type
+# and api requirements. This example uses a Socrata data source
+# which is common for CDC data sources.
 
 domain = "data.cdc.gov"
-id = "ksfb-ug5d"
+id = "akkj-j5ru"
 limit = 10000
 
 ############################################################################
@@ -28,7 +32,7 @@ limit = 10000
 
 account = ""
 container = ""
-prefix = "dataops/mcmv/raw/covid_vax_weekly_cumulative"
+prefix = "dataops/mcmv/raw/covid_survey_trends_and_intent"
 
 ############################################################################
 
@@ -39,7 +43,7 @@ prefix = "dataops/mcmv/raw/covid_vax_weekly_cumulative"
 
 account = ""
 container = ""
-prefix = "dataops/mcmv/transformed/covid_vax_weekly_cumulative"
+prefix = "dataops/mcmv/transformed/covid_survey_trends_and_intent"
 
 ############################################################################
 
