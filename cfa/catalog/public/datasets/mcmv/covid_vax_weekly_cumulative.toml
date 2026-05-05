@@ -1,0 +1,48 @@
+# This dataset config is for weekly pulls of the Weekly Cumulative Covid 
+# Vaccination Coverage from data.cdc.gov.
+# 'https://data.cdc.gov/Vaccinations/Weekly-Cumulative-COVID-19-Vaccination-Coverage-an/ksfb-ug5d/about_data'
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "covid_vax_weekly_cumulative"
+type = "etl"
+
+############################################################################
+
+[source]
+
+domain = "data.cdc.gov"
+id = "ksfb-ug5d"
+limit = 10000
+
+############################################################################
+
+[extract]
+# These are the details of where to store the raw extracted data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/mcmv/raw/covid_vax_weekly_cumulative"
+
+############################################################################
+
+[load]
+# These are the details of where to store the transformed and loaded data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/mcmv/transformed/covid_vax_weekly_cumulative"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-05-05: Initial version created by Ryan Raasch
