@@ -1,5 +1,4 @@
 import os
-import tempfile
 from io import BytesIO
 from typing import Optional
 
@@ -14,8 +13,6 @@ dataset = datacat.public.mcmv.covid_vax_weekly_cumulative
 access_token = os.getenv("NIS_APP_TOKEN", None)
 
 dataset_id = dataset.config["source"]["id"]
-
-td = tempfile.TemporaryDirectory()
 
 clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
 

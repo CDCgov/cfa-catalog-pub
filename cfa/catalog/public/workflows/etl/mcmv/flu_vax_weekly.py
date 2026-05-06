@@ -1,5 +1,4 @@
 import os
-import tempfile
 from io import BytesIO
 from typing import Optional
 
@@ -49,8 +48,7 @@ def extract(
 
 
 def transform(raw_df: pl.DataFrame) -> pl.DataFrame:
-    df = raw_df.with_columns(pl.col("week_ending").str.slice(0, 10))
-    return clean_dataset(df.lazy(), dataset_id, clean_args, "warn")
+    return clean_dataset(raw_df.lazy(), dataset_id, clean_args, "warn")
 
 
 def load(data: pl.DataFrame) -> None:
