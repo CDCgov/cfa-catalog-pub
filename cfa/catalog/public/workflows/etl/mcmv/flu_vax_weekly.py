@@ -17,15 +17,13 @@ dataset_id = dataset.config["source"]["id"]
 
 clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
 
-v = dataset.extract.get_versions()
-newest = "0000-00-00"
-if v:
-    newest = v[0].split("T")[0]
-response = requests.get(
-    f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
-)
-r = response.json()
-updated_date = r["dataUpdatedAt"].split("T")[0]
+
+def get_updated_date() -> str:
+    response = requests.get(
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+    )
+    r = response.json()
+    return r["dataUpdatedAt"].split("T")[0]
 
 
 def extract(
@@ -48,6 +46,7 @@ def extract(
 
     buffer = BytesIO()
     raw.write_parquet(buffer)
+    updated_date = get_updated_date()
     dataset.extract.write_blob(
         file_buffer=buffer.getvalue(),
         path_after_prefix=f"{updated_date}/data.parquet",
@@ -71,6 +70,7 @@ def load(data: pl.DataFrame) -> None:
     """
     buffer = BytesIO()
     data.write_parquet(buffer)
+    updated_date = get_updated_date()
     dataset.load.write_blob(
         file_buffer=buffer.getvalue(),
         path_after_prefix=f"{updated_date}/data.parquet",
@@ -96,6 +96,11 @@ def etl_if_new(app_token: Optional[str] = access_token) -> None:
     Args:
         app_token (Optional[str]): Application token for accessing the CDC API
     """
+    v = dataset.extract.get_versions()
+    newest = "0000-00-00"
+    if v:
+        newest = v[0].split("T")[0]
+    updated_date = get_updated_date()
     if newest < updated_date:
         print("New data available. Running ETL process.")
         etl(app_token)
