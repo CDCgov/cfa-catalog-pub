@@ -17,10 +17,10 @@ dataset_id = dataset.config["source"]["id"]
 
 clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
 
-v = dataset.extract.get_versions()[0]
+v = dataset.extract.get_versions()
 newest = "0000-00-00"
 if v:
-    newest = dataset.extract.get_versions()[0].split("T")[0]
+    newest = v[0].split("T")[0]
 response = requests.get(f"https://data.cdc.gov/api/views/metadata/v1/{id}")
 r = response.json()
 updated_date = r["dataUpdatedAt"].split("T")[0]
