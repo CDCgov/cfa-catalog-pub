@@ -1,7 +1,7 @@
-# This dataset config is for weekly pulls of the Flu Vaccination Coverage for All
-# Ages 6 Months+
+# This dataset config is for weekly pulls of the Weekly Cumulative Influenza
+# Vaccination Coverage by Flue Season 6 Months to 17 Years
 #  dataset on data.cdc.gov
-# 'https://data.cdc.gov/Flu-Vaccinations/Influenza-Vaccination-Coverage-for-All-Ages-6-Mont/vh55-3he6/about_data'
+#  'https://data.cdc.gov/Child-Vaccinations/Weekly-Cumulative-Influenza-Vaccination-Coverage-b/vncy-2ds7/about_data'
 
 ############################################################################
 
@@ -9,7 +9,7 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "flu_vax_all_ages"
+name = "flu_vax_weekly_cumulative"
 automate = false
 type = "etl"
 
@@ -21,7 +21,7 @@ type = "etl"
 # which is common for CDC data sources.
 
 domain = "data.cdc.gov"
-id = "vh55-3he6"
+id = "vncy-2ds7"
 limit = 10000
 
 ############################################################################
@@ -33,7 +33,7 @@ limit = 10000
 
 account = ""
 container = ""
-prefix = "dataops/mcmv/raw/flu_vax_all_ages"
+prefix = "dataops/mcmv/raw/flu_vax_weekly_cumulative"
 
 ############################################################################
 
@@ -44,7 +44,7 @@ prefix = "dataops/mcmv/raw/flu_vax_all_ages"
 
 account = ""
 container = ""
-prefix = "dataops/mcmv/transformed/flu_vax_all_ages"
+prefix = "dataops/mcmv/transformed/flu_vax_weekly_cumulative"
 
 ############################################################################
 
