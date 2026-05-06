@@ -10,7 +10,7 @@ from nisapi.clean import clean_dataset
 from cfa.dataops import datacat
 
 dataset = datacat.public.mcmv.covid_survey_resp_vax_view
-id = dataset.config["source"]["id"]
+
 access_token = os.getenv("NIS_APP_TOKEN", None)
 
 dataset_id = dataset.config["source"]["id"]
@@ -21,7 +21,9 @@ v = dataset.extract.get_versions()
 newest = "0000-00-00"
 if v:
     newest = v[0].split("T")[0]
-response = requests.get(f"https://data.cdc.gov/api/views/metadata/v1/{id}")
+response = requests.get(
+    f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+)
 r = response.json()
 updated_date = r["dataUpdatedAt"].split("T")[0]
 
