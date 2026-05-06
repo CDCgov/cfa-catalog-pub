@@ -4,18 +4,23 @@ from typing import Optional
 
 import nisapi
 import polars as pl
+import requests
 from nisapi.clean import clean_dataset
 
 from cfa.dataops import datacat
 
 dataset = datacat.public.mcmv.covid_survey_resp_vax_view
-
+id = dataset.config["source"]["id"]
 access_token = os.getenv("NIS_APP_TOKEN", None)
 
 dataset_id = dataset.config["source"]["id"]
 
-
 clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
+
+newest = dataset.extract.get_versions()[0].split("T")[0]
+response = requests.get(f"https://data.cdc.gov/api/views/metadata/v1/{id}")
+r = response.json()
+updated_date = r["dataUpdatedAt"].split("T")[0]
 
 
 def extract(
@@ -40,8 +45,8 @@ def extract(
     raw.write_parquet(buffer)
     dataset.extract.write_blob(
         file_buffer=buffer.getvalue(),
-        path_after_prefix="data.parquet",
-        auto_version=True,
+        path_after_prefix=f"{updated_date}/data.parquet",
+        auto_version=False,
     )
     buffer.close()
 
@@ -63,8 +68,8 @@ def load(data: pl.DataFrame) -> None:
     data.write_parquet(buffer)
     dataset.load.write_blob(
         file_buffer=buffer.getvalue(),
-        path_after_prefix="data.parquet",
-        auto_version=True,
+        path_after_prefix=f"{updated_date}/data.parquet",
+        auto_version=False,
     )
     buffer.close()
 
@@ -78,3 +83,16 @@ def etl(app_token: Optional[str] = access_token) -> None:
     raw_df = extract(app_token)
     transformed_df = transform(raw_df)
     load(transformed_df)
+
+
+def etl_if_new(app_token: Optional[str] = access_token) -> None:
+    """Run the ETL process only if there is new data available.
+
+    Args:
+        app_token (Optional[str]): Application token for accessing the CDC API
+    """
+    if newest < updated_date:
+        print("New data available. Running ETL process.")
+        etl(app_token)
+    else:
+        print("No new data available. ETL process will not run.")
