@@ -14,7 +14,7 @@ from cfa.dataops import datacat
 from cfa.dataops.soda import Query
 
 dataset = datacat.public.stf.nhsn_hrd_prelim
-
+dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
 
 
@@ -69,6 +69,14 @@ def etl_archive():
                     buffer.close()
 
 
+def get_updated_date() -> str:
+    response = requests.get(
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
+    )
+    r = response.json()
+    return r["dataUpdatedAt"].split("T")[0] + "T00-00-00"
+
+
 def extract(
     app_token: Optional[str] = access_token,
 ) -> pl.DataFrame:
@@ -92,9 +100,11 @@ def extract(
     for i in q.get_pages():
         dfs.append(pl.from_dicts(i))
         parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
-
+    updated_date = get_updated_date()
     dataset.extract.write_blob(
-        file_buffer=parts, path_after_prefix="part.json", auto_version=True
+        file_buffer=parts,
+        path_after_prefix=f"{updated_date}/part.json",
+        auto_version=False,
     )
 
     data = pl.concat(dfs, how="diagonal")
@@ -166,12 +176,35 @@ def load(data: pl.DataFrame) -> None:
     """
     buffer = BytesIO()
     data.write_parquet(buffer)
+    updated_date = get_updated_date()
     dataset.load.write_blob(
         file_buffer=buffer.getvalue(),
-        path_after_prefix="data.parquet",
-        auto_version=True,
+        path_after_prefix=f"{updated_date}/data.parquet",
+        auto_version=False,
     )
     buffer.close()
+
+
+def etl_if_new(app_token: Optional[str] = access_token) -> None:
+    """Run the ETL process only if there is new data available.
+
+    Args:
+        app_token (Optional[str]): Application token for accessing the CDC API
+    """
+    v = dataset.extract.get_versions()
+    newest = v[0].split("T")[0]
+    response = requests.get(
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+    )
+    r = response.json()
+    updated_date = r["dataUpdatedAt"].split("T")[0]
+    if newest < updated_date:
+        print("New data available. Running ETL process.")
+        raw = extract(app_token)
+        transformed = transform(raw)
+        load(transformed)
+    else:
+        print("No new data available. Skipping ETL process.")
 
 
 def etl() -> None:
