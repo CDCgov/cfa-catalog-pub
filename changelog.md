@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.05.13.0]
+
+## Fixed
+
+- Use `infer_schema_length=None` in `pl.from_dicts` calls in NHSN HRD ETL workflows to prevent schema inference errors across paginated API responses
+
 # [2026.04.16.0]
 
 ## Changed
