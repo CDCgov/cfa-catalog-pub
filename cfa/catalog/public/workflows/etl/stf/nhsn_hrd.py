@@ -71,7 +71,7 @@ def etl_archive():
 
 def get_updated_date() -> str:
     response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
     )
     r = response.json()
     return r["dataUpdatedAt"].split("T")[0] + "T00-00-00"
