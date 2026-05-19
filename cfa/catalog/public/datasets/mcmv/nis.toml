@@ -1,0 +1,30 @@
+# This dataset config is for weekly pulls of the Weekly Influenza Vaccination Coverage and Intent
+#  dataset on data.cdc.gov
+#  'https://data.cdc.gov/Flu-Vaccinations/Weekly-Influenza-Vaccination-Coverage-and-Intent-f/sw5n-wg2p/'
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "nis"
+automate = false
+type = "etl"
+
+############################################################################
+
+[load]
+# These are the details of where to store the transformed and loaded data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/mcmv/transformed/nis"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-05-19: Initial version created by Ryan Raasch
