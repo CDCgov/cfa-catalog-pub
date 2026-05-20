@@ -11,7 +11,7 @@ The versioning pattern is `YYYY.MM.DD.micro
 
 ## Changed
 
-- updated `nhsn_hrd` and `nhsn_hrd_prelim` workflows to run daily and save in the format yyyy-mm-ddT00-00-00
+- updated `nhsn_hrd` and `nhsn_hrd_prelim` ETL workflows to write versioned output paths based on CDC `dataUpdatedAt` and use an `etl_if_new` helper to skip runs when no new source data is available
 
 # [2026.05.13.0]
 
