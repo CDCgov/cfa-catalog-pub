@@ -200,8 +200,10 @@ def etl_if_new(app_token: Optional[str] = access_token) -> None:
     v = dataset.extract.get_versions()
     newest = v[0].split("T")[0]
     response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}",
+        timeout=30,
     )
+    response.raise_for_status()
     r = response.json()
     updated_date = r["dataUpdatedAt"].split("T")[0]
     if newest < updated_date:
