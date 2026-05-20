@@ -73,8 +73,14 @@ def get_updated_date() -> str:
     response = requests.get(
         f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
     )
+    response.raise_for_status()
     r = response.json()
-    return r["dataUpdatedAt"].split("T")[0] + "T00-00-00"
+    data_updated_at = r.get("dataUpdatedAt")
+    if not data_updated_at:
+        raise ValueError(
+            "CDC metadata response did not include 'dataUpdatedAt'"
+        )
+    return data_updated_at.split("T")[0] + "T00-00-00"
 
 
 def extract(
