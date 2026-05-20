@@ -7,6 +7,10 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.05.20.0]
+
+- update `nhsn_hrd` and `nhsn_hrd_prelim` workflows to run daily and save in the format yyyy-mm-ddT00-00-00
+
 # [2026.05.13.0]
 
 ## Fixed
