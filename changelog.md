@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.05.28.0]
+
+## Changed
+
+- updated `nhsn_hrd` and `nhsn_hrd_prelim` ETL workflows to write versioned output paths based on CDC `dataUpdatedAt` and use an `etl_if_new` helper to skip runs when no new source data is available
+
 # [2026.05.13.0]
 
 ## Fixed
