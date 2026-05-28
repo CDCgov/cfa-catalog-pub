@@ -83,6 +83,21 @@ def get_updated_date() -> str:
     return updated_at.split("T")[0] + "T00-00-00"
 
 
+def check_for_new_data() -> bool:
+    v = dataset.extract.get_versions()
+    newest = v[0].split("T")[0]
+    response = requests.get(
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}",
+        timeout=30,
+    )
+    response.raise_for_status()
+    r = response.json()
+    updated_date = r["dataUpdatedAt"].split("T")[0]
+    if newest < updated_date:
+        return True
+    return False
+
+
 def extract(
     app_token: Optional[str] = access_token,
 ) -> pl.DataFrame:
@@ -197,16 +212,7 @@ def etl_if_new(app_token: Optional[str] = access_token) -> None:
     Args:
         app_token (Optional[str]): Application token for accessing the CDC API
     """
-    v = dataset.extract.get_versions()
-    newest = v[0].split("T")[0]
-    response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}",
-        timeout=30,
-    )
-    response.raise_for_status()
-    r = response.json()
-    updated_date = r["dataUpdatedAt"].split("T")[0]
-    if newest < updated_date:
+    if check_for_new_data():
         print("New data available. Running ETL process.")
         raw = extract(app_token)
         transformed = transform(raw)
