@@ -85,7 +85,7 @@ def get_updated_date() -> str:
 
 def check_for_new_data() -> bool:
     v = dataset.extract.get_versions()
-    newest = v[0].split("T")[0]
+    newest = v[0]
     updated_date = get_updated_date()
     if newest < updated_date:
         return True
