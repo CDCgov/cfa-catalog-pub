@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from types import SimpleNamespace
 
 import polars as pl
@@ -10,8 +11,10 @@ from cfa.dataops import datacat
 dataset = datacat.public.stf.nwss
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 
+date_pattern = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
-def copy_missing_files() -> None:
+
+def check_for_new_data() -> (bool, list):
     nwss_files = sorted(
         [
             i["name"].removesuffix("/")
@@ -24,8 +27,6 @@ def copy_missing_files() -> None:
     )
     cached_versions = dataset.load.get_versions()
 
-    date_pattern = re.compile(r"(\d{4}-\d{2}-\d{2})")
-
     files_to_copy = [
         i
         for i in nwss_files
@@ -33,10 +34,14 @@ def copy_missing_files() -> None:
         and re.search(date_pattern, i).group(1) not in cached_versions
     ]
 
-    if not files_to_copy:
+    return (len(files_to_copy) > 0, files_to_copy)
+
+
+def copy_missing_files() -> Path:
+    new_data, files_to_copy = check_for_new_data()
+    if not new_data:
         print("No new files to copy")
         return
-
     pbar = tqdm.tqdm(files_to_copy)
     for file in pbar:
         pbar.set_description(f"Copying {file}")
@@ -55,8 +60,9 @@ def copy_missing_files() -> None:
             # Skip files that do not contain a valid date, for defensive robustness
             continue
         date = date_match.group(1)
-
+        outpath = f"{date}/data.parquet"
         dataset.load.save_dataframe(
             df,
-            path_after_prefix=f"{date}/data.parquet",
+            path_after_prefix=outpath,
         )
+    return Path(outpath)
