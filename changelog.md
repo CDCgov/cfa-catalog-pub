@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.06.01.0]
+
+## Changed
+
+- split `etl_if_new()` function to create new `check_for_new_data()` function.
+
 # [2026.05.28.0]
 
 ## Changed
