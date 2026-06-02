@@ -34,12 +34,12 @@ def check_for_new_data() -> tuple[bool, list[str]]:
     return (len(files_to_copy) > 0, files_to_copy)
 
 
-def copy_missing_files() -> Path:
+def copy_missing_files() -> Path | None:
     new_data, files_to_copy = check_for_new_data()
 
     if not new_data:
         print("No new files to copy")
-        return
+        return None
 
     pbar = tqdm.tqdm(files_to_copy)
     for file in pbar:
