@@ -12,7 +12,7 @@ dataset = datacat.public.stf.param_estimates
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 
 
-def check_for_new_data() -> bool:
+def check_for_new_data() -> tuple[bool, list[str]]:
     param_files = sorted(
         [
             i["name"].removesuffix("/")
