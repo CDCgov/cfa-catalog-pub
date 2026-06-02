@@ -11,7 +11,7 @@ The versioning pattern is `YYYY.MM.DD.micro
 
 ## Changed
 
-- create `check_for_new_data()` functions for nwss and param_estimtaes
+- create `check_for_new_data()` functions for nwss and param_estimates
 
 # [2026.06.01.0]
 
