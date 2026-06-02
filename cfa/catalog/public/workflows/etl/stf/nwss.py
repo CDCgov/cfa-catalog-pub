@@ -14,7 +14,7 @@ source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 date_pattern = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
 
-def check_for_new_data() -> (bool, list):
+def check_for_new_data() -> tuple[bool, list[str]]:
     nwss_files = sorted(
         [
             i["name"].removesuffix("/")
