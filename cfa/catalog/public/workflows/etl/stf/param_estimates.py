@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 from types import SimpleNamespace
 
 import polars as pl
@@ -11,7 +12,7 @@ dataset = datacat.public.stf.param_estimates
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 
 
-def copy_missing_files() -> None:
+def check_for_new_data() -> tuple[bool, list[str]]:
     param_files = sorted(
         [
             i["name"].removesuffix("/")
@@ -30,10 +31,15 @@ def copy_missing_files() -> None:
         for f in param_files
         if (m := pattern.search(f)) and m.group(1) not in cached_versions
     ]
+    return (len(files_to_copy) > 0, files_to_copy)
 
-    if not files_to_copy:
+
+def copy_missing_files() -> Path | None:
+    new_data, files_to_copy = check_for_new_data()
+
+    if not new_data:
         print("No new files to copy")
-        return
+        return None
 
     pbar = tqdm.tqdm(files_to_copy)
     for file in pbar:
@@ -48,8 +54,9 @@ def copy_missing_files() -> None:
 
         # if there is some transformation to the original data that should be performed before saving
         # make those transformations to the dataframe here
-
+        outpath = f"{file[0:10]}/data.parquet"
         dataset.load.save_dataframe(
             df,
-            path_after_prefix=f"{file[0:10]}/data.parquet",
+            path_after_prefix=outpath,
         )
+    return Path(outpath)

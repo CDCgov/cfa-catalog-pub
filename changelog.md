@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.06.02.0]
+
+## Changed
+
+- create `check_for_new_data()` functions for nwss and param_estimates
+
 # [2026.06.01.0]
 
 ## Changed
