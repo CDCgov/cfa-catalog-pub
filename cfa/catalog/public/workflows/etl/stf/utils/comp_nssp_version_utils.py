@@ -30,52 +30,55 @@ def get_latest_comprehensive_for_date(files):
         "latest_vintage_full_path"
     ]
     comprehensive_df = duckdb.sql(
-        f"""
-            WITH latest_report_dates AS
-            (SELECT reference_date,
-                    MAX(report_date) AS latest_report_date
-            FROM read_parquet({files})
-            GROUP BY reference_date),
-                modern_vintages_mega AS
-            (SELECT ag.report_date,
+    f"""
+        WITH latest_report_dates AS
+        (SELECT reference_date,
+                MAX(report_date) AS latest_report_date
+        FROM read_parquet({files})
+        GROUP BY reference_date),
+            modern_vintages_mega AS
+        (SELECT ag.report_date,
+                ag.reference_date,
+                ag.asof,
+                ag.metric,
+                ag.geo_type,
+                ag.geo_value,
+                ag.run_id,
+                ag.disease,
+                SUM(ag.value) AS value
+        FROM read_parquet({files}) AS ag
+        JOIN latest_report_dates AS lrd ON ag.reference_date = lrd.reference_date
+        AND ag.report_date = lrd.latest_report_date
+        WHERE ag.reference_date <= DATE('2024-02-21')
+        AND ag.report_date <= DATE('2024-02-21')
+        GROUP BY ag.report_date,
                     ag.reference_date,
                     ag.asof,
                     ag.metric,
                     ag.geo_type,
                     ag.geo_value,
                     ag.run_id,
-                    ag.disease,
-                    SUM(ag.value) AS value
-            FROM read_parquet({files}) AS ag
-            JOIN latest_report_dates AS lrd ON ag.reference_date = lrd.reference_date
-            AND ag.report_date = lrd.latest_report_date
-            GROUP BY ag.report_date,
-                        ag.reference_date,
-                        ag.asof,
-                        ag.metric,
-                        ag.geo_type,
-                        ag.geo_value,
-                        ag.run_id,
-                        ag.disease)
-            SELECT report_date,
-                reference_date,
-                metric,
-                geo_type,
-                geo_value,
-                disease,
-                value
-            FROM modern_vintages_mega
-            UNION ALL
-            SELECT report_date,
-                reference_date,
-                metric,
-                geo_type,
-                geo_value,
-                disease,
-                value
-            FROM '{latest_archival_path}'
-            WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega);
-        """
+                    ag.disease)
+        SELECT report_date,
+            reference_date,
+            metric,
+            geo_type,
+            geo_value,
+            disease,
+            value
+        FROM modern_vintages_mega
+        UNION ALL
+        SELECT report_date,
+            reference_date,
+            metric,
+            geo_type,
+            geo_value,
+            disease,
+            value
+        FROM '{latest_archival_path}'
+        WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega);
+        
+    """
     ).pl()
     return comprehensive_df
 
