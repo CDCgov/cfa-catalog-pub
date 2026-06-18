@@ -80,7 +80,6 @@ def get_latest_comprehensive_for_date(files, version_date = None):
                 value
             FROM '{latest_archival_path}'
             WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega);
-            
         """
     ).pl()
     return comprehensive_df
