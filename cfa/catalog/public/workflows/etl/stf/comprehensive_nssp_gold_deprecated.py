@@ -47,7 +47,7 @@ def generate_versioned_dataset() -> None:
     for ref_date in tqdm(date_list):
         print(f"Generating comprehensive dataset for {ref_date}...")
         dates_available = get_gold_dates_before_ref(ref_date, gold_dates_sort)
-        df = get_latest_comprehensive_for_date(dates_available)
+        df = get_latest_comprehensive_for_date(dates_available, ref_date)
         clear_azure_credentials()
-        copy_file(df, ref_date)
+        # copy_file(df, ref_date)
     return None
