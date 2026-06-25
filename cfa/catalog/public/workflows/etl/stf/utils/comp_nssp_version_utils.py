@@ -79,7 +79,8 @@ def get_latest_comprehensive_for_date(files, version_date = None):
                 disease,
                 value
             FROM '{latest_archival_path}'
-            WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega);
+            WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega)
+            AND report_date <= DATE('{version_date}');
         """
     ).pl()
     return comprehensive_df
