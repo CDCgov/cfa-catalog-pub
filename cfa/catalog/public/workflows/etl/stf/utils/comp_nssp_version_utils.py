@@ -24,8 +24,11 @@ def get_gold_dates_before_ref(
 
 
 # run the query to get the latest comprehensive dataset for the files passed in
-def get_latest_comprehensive_for_date(files):
+def get_latest_comprehensive_for_date(files, version_date = None):
     setup_duckdb()
+    # TODO is anything using this function anymore?
+    if not version_date:
+        version_date = datetime.now()
     latest_archival_path = get_latest_archival_path()[
         "latest_vintage_full_path"
     ]
@@ -49,6 +52,8 @@ def get_latest_comprehensive_for_date(files):
             FROM read_parquet({files}) AS ag
             JOIN latest_report_dates AS lrd ON ag.reference_date = lrd.reference_date
             AND ag.report_date = lrd.latest_report_date
+            WHERE ag.reference_date <= DATE('{version_date}')
+            AND ag.report_date <=  DATE('{version_date}')
             GROUP BY ag.report_date,
                         ag.reference_date,
                         ag.asof,
@@ -74,7 +79,8 @@ def get_latest_comprehensive_for_date(files):
                 disease,
                 value
             FROM '{latest_archival_path}'
-            WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega);
+            WHERE reference_date < (SELECT MIN(reference_date) FROM modern_vintages_mega)
+            AND report_date <= DATE('{version_date}');
         """
     ).pl()
     return comprehensive_df
