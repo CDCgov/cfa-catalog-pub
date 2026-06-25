@@ -9,7 +9,7 @@ dataset = datacat.public.mcmv.nis
 
 
 def get_date() -> str:
-    return datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    return datetime.now().strftime("%Y-%m-%d")
 
 
 def load() -> None:
