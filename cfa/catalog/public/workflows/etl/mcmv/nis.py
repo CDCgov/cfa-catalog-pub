@@ -12,7 +12,7 @@ def get_date() -> str:
     return datetime.now().strftime("%Y-%m-%d")
 
 
-def load() -> None:
+def load() -> str:
     # get datasets
     flu_vax_weekly_c = (
         datacat.public.mcmv.flu_vax_weekly_cumulative.load.get_dataframe(
@@ -80,3 +80,4 @@ def load() -> None:
         auto_version=False,
     )
     buffer.close()
+    return f"{updated_date}/data.parquet"

@@ -61,7 +61,7 @@ def transform(raw_df: pl.DataFrame) -> pl.DataFrame:
     return clean_dataset(raw_df.lazy(), dataset_id, clean_args, "warn")
 
 
-def load(data: pl.DataFrame) -> None:
+def load(data: pl.DataFrame) -> str:
     """
     Load the transformed data to the desired destination.
 
@@ -77,9 +77,10 @@ def load(data: pl.DataFrame) -> None:
         auto_version=False,
     )
     buffer.close()
+    return f"{updated_date}/data.parquet"
 
 
-def etl(app_token: Optional[str] = access_token) -> None:
+def etl(app_token: Optional[str] = access_token) -> str:
     """Run the full ETL process: extract, transform, and load.
 
     Args:
@@ -87,10 +88,11 @@ def etl(app_token: Optional[str] = access_token) -> None:
     """
     raw_df = extract(app_token)
     transformed_df = transform(raw_df)
-    load(transformed_df)
+    outpath = load(transformed_df)
+    return outpath
 
 
-def etl_if_new(app_token: Optional[str] = access_token) -> None:
+def etl_if_new(app_token: Optional[str] = access_token) -> str:
     """Run the ETL process only if there is new data available.
 
     Args:
@@ -103,6 +105,9 @@ def etl_if_new(app_token: Optional[str] = access_token) -> None:
     updated_date = get_updated_date()
     if newest < updated_date:
         print("New data available. Running ETL process.")
-        etl(app_token)
+        outpath = etl(app_token)
+        print(f"ETL process completed. Data saved to {outpath}.")
     else:
         print("No new data available. ETL process will not run.")
+        outpath = ""
+    return outpath
