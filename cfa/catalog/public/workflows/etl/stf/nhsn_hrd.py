@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+from functools import lru_cache
 from io import BytesIO, StringIO
 from typing import Optional
 
@@ -69,27 +70,24 @@ def etl_archive():
                     buffer.close()
 
 
+@lru_cache(maxsize=1)
 def get_updated_date() -> str:
     response = requests.get(
         f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
     )
     response.raise_for_status()
     r = response.json()
-    data_updated_at = r.get("dataUpdatedAt")
-    if not data_updated_at:
+    updated_at = r.get("dataUpdatedAt")
+    if not updated_at:
         raise ValueError(
             "CDC metadata response did not include 'dataUpdatedAt'"
         )
-    return data_updated_at.split("T")[0] + "T00-00-00"
+    return updated_at.split("T")[0] + "T00-00-00"
 
 
 def check_for_new_data() -> bool:
-    v = dataset.extract.get_versions()
-    newest = v[0]
-    updated_date = get_updated_date()
-    if newest < updated_date:
-        return True
-    return False
+    newest = dataset.extract.get_versions()[0]
+    return newest < get_updated_date()
 
 
 def extract(
