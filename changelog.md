@@ -7,6 +7,36 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.06.25.0]
+
+## Changed
+
+- enhanced efficiency of nhsn_hrd and nhsn_hrd_prelim data checks
+
+# [2026.06.02.0]
+
+## Changed
+
+- create `check_for_new_data()` functions for nwss and param_estimates
+
+# [2026.06.01.0]
+
+## Changed
+
+- split `etl_if_new()` function to create new `check_for_new_data()` function.
+
+# [2026.05.28.0]
+
+## Changed
+
+- updated `nhsn_hrd` and `nhsn_hrd_prelim` ETL workflows to write versioned output paths based on CDC `dataUpdatedAt` and use an `etl_if_new` helper to skip runs when no new source data is available
+
+# [2026.05.13.0]
+
+## Fixed
+
+- Use `infer_schema_length=None` in `pl.from_dicts` calls in NHSN HRD ETL workflows to prevent schema inference errors across paginated API responses
+
 # [2026.04.16.0]
 
 ## Changed

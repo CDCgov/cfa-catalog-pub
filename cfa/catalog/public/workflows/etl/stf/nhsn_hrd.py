@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+from functools import lru_cache
 from io import BytesIO, StringIO
 from typing import Optional
 
@@ -14,7 +15,7 @@ from cfa.dataops import datacat
 from cfa.dataops.soda import Query
 
 dataset = datacat.public.stf.nhsn_hrd
-
+dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
 
 
@@ -69,6 +70,26 @@ def etl_archive():
                     buffer.close()
 
 
+@lru_cache(maxsize=1)
+def get_updated_date() -> str:
+    response = requests.get(
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
+    )
+    response.raise_for_status()
+    r = response.json()
+    updated_at = r.get("dataUpdatedAt")
+    if not updated_at:
+        raise ValueError(
+            "CDC metadata response did not include 'dataUpdatedAt'"
+        )
+    return updated_at.split("T")[0] + "T00-00-00"
+
+
+def check_for_new_data() -> bool:
+    newest = dataset.extract.get_versions()[0]
+    return newest < get_updated_date()
+
+
 def extract(
     app_token: Optional[str] = access_token,
 ) -> pl.DataFrame:
@@ -90,11 +111,13 @@ def extract(
     dfs = []
     parts = []
     for i in q.get_pages():
-        dfs.append(pl.from_dicts(i))
+        dfs.append(pl.from_dicts(i, infer_schema_length=None))
         parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
 
     dataset.extract.write_blob(
-        file_buffer=parts, path_after_prefix="part.json", auto_version=True
+        file_buffer=parts,
+        path_after_prefix=f"{get_updated_date()}/part.json",
+        auto_version=False,
     )
 
     data = pl.concat(dfs, how="diagonal")
@@ -167,10 +190,25 @@ def load(data: pl.DataFrame) -> None:
     data.write_parquet(buffer)
     dataset.load.write_blob(
         file_buffer=buffer.getvalue(),
-        path_after_prefix="data.parquet",
-        auto_version=True,
+        path_after_prefix=f"{get_updated_date()}/data.parquet",
+        auto_version=False,
     )
     buffer.close()
+
+
+def etl_if_new(app_token: Optional[str] = access_token) -> None:
+    """Run the ETL process only if there is new data available.
+
+    Args:
+        app_token (Optional[str]): Application token for accessing the CDC API
+    """
+    if check_for_new_data():
+        print("New data available. Running ETL process.")
+        raw = extract(app_token)
+        transformed = transform(raw)
+        load(transformed)
+    else:
+        print("No new data available. Skipping ETL process.")
 
 
 def etl() -> None:

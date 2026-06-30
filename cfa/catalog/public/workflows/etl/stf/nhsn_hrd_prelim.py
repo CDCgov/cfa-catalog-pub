@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+from functools import lru_cache
 from io import BytesIO, StringIO
 from typing import Optional
 
@@ -69,12 +70,24 @@ def etl_archive():
                     buffer.close()
 
 
+@lru_cache(maxsize=1)
 def get_updated_date() -> str:
     response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
     )
+    response.raise_for_status()
     r = response.json()
-    return r["dataUpdatedAt"].split("T")[0] + "T00-00-00"
+    updated_at = r.get("dataUpdatedAt")
+    if not updated_at:
+        raise ValueError(
+            "CDC metadata response did not include 'dataUpdatedAt'"
+        )
+    return updated_at.split("T")[0] + "T00-00-00"
+
+
+def check_for_new_data() -> bool:
+    newest = dataset.extract.get_versions()[0]
+    return newest < get_updated_date()
 
 
 def extract(
@@ -98,7 +111,7 @@ def extract(
     dfs = []
     parts = []
     for i in q.get_pages():
-        dfs.append(pl.from_dicts(i))
+        dfs.append(pl.from_dicts(i, infer_schema_length=None))
         parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
     updated_date = get_updated_date()
     dataset.extract.write_blob(
@@ -191,14 +204,7 @@ def etl_if_new(app_token: Optional[str] = access_token) -> None:
     Args:
         app_token (Optional[str]): Application token for accessing the CDC API
     """
-    v = dataset.extract.get_versions()
-    newest = v[0].split("T")[0]
-    response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
-    )
-    r = response.json()
-    updated_date = r["dataUpdatedAt"].split("T")[0]
-    if newest < updated_date:
+    if check_for_new_data():
         print("New data available. Running ETL process.")
         raw = extract(app_token)
         transformed = transform(raw)
