@@ -26,7 +26,9 @@ def get_updated_date() -> str:
     r = response.json()
     updated_at = r.get("dataUpdatedAt")
     if not updated_at:
-        raise ValueError("CDC metadata response did not include 'dataUpdatedAt'")
+        raise ValueError(
+            "CDC metadata response did not include 'dataUpdatedAt'"
+        )
     return updated_at.split("T")[0]
 
 
