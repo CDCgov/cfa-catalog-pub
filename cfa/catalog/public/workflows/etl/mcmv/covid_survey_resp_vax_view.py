@@ -92,7 +92,7 @@ def etl(app_token: Optional[str] = access_token) -> str:
     return outpath
 
 
-def etl_if_new(app_token: Optional[str] = access_token) -> None:
+def etl_if_new(app_token: Optional[str] = access_token) -> str:
     """Run the ETL process only if there is new data available.
 
     Args:
