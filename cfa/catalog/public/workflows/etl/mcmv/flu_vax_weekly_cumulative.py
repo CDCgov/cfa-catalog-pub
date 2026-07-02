@@ -20,10 +20,14 @@ clean_args = nisapi._get_dataset_metadata(dataset_id, "cleaning_arguments")
 
 def get_updated_date() -> str:
     response = requests.get(
-        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}"
+        f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10
     )
+    response.raise_for_status()
     r = response.json()
-    return r["dataUpdatedAt"].split("T")[0]
+    updated_at = r.get("dataUpdatedAt")
+    if not updated_at:
+        raise ValueError("CDC metadata response did not include 'dataUpdatedAt'")
+    return updated_at.split("T")[0]
 
 
 def extract(
