@@ -11,6 +11,8 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "cfa-dataops @ git+https://github.com/CDCgov/cfa-dataops.git@main",
+    "nisapi @ git+https://github.com/CDCgov/nis-py-api.git@main",
+    "requests",
     "pandera[pandas] (>=0.25.0)",
     "tomli (>=2.2.1)",
     "httpx (>=0.28.1)",

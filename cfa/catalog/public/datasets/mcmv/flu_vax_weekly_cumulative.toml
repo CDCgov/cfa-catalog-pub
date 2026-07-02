@@ -1,0 +1,53 @@
+# This dataset config is for weekly pulls of the Weekly Cumulative Influenza
+# Vaccination Coverage by Flu Season 6 Months to 17 Years
+#  dataset on data.cdc.gov
+#  'https://data.cdc.gov/Child-Vaccinations/Weekly-Cumulative-Influenza-Vaccination-Coverage-b/vncy-2ds7/about_data'
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "flu_vax_weekly_cumulative"
+automate = false
+type = "etl"
+
+############################################################################
+
+[source]
+# These source fields are open to being changed based on the source type
+# and api requirements. This example uses a Socrata data source
+# which is common for CDC data sources.
+
+domain = "data.cdc.gov"
+id = "vncy-2ds7"
+limit = 10000
+
+############################################################################
+
+[extract]
+# These are the details of where to store the raw extracted data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/mcmv/raw/flu_vax_weekly_cumulative"
+
+############################################################################
+
+[load]
+# These are the details of where to store the transformed and loaded data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/mcmv/transformed/flu_vax_weekly_cumulative"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-05-06: Initial version created by Ryan Raasch
