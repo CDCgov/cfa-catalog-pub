@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.07.06.0]
+
+## Added
+
+- added type hints for public catalog entries exposed through `cfa.dataops.datacat` and `reportcat`
+
 # [2026.06.25.0]
 
 ## Changed
