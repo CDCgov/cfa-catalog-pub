@@ -127,7 +127,7 @@ def extract(
     cols = get_columns(dataset_id)
     if cols:
         for i in q.get_pages():
-            dfs.append(pl.from_dicts(i, schema=cols))
+            dfs.append(pl.from_dicts(i, schema=cols, infer_schema_length=None))
             parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
     else:
         for i in q.get_pages():
