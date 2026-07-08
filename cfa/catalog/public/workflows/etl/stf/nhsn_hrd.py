@@ -90,6 +90,20 @@ def check_for_new_data() -> bool:
     return newest < get_updated_date()
 
 
+def get_columns(dataset_id):
+    try:
+        link = f"https://data.cdc.gov/api/views/{dataset_id}.json"
+        results = requests.get(link).json()
+        field_names = [
+            c.get("fieldName")
+            for c in results["columns"]
+            if c.get("fieldName") is not None
+        ]
+        return field_names
+    except Exception:
+        return []
+
+
 def extract(
     app_token: Optional[str] = access_token,
 ) -> pl.DataFrame:
@@ -110,10 +124,15 @@ def extract(
     )
     dfs = []
     parts = []
-    for i in q.get_pages():
-        dfs.append(pl.from_dicts(i, infer_schema_length=None))
-        parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
-
+    cols = get_columns(dataset_id)
+    if cols:
+        for i in q.get_pages():
+            dfs.append(pl.from_dicts(i, schema=cols))
+            parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
+    else:
+        for i in q.get_pages():
+            dfs.append(pl.from_dicts(i, infer_schema_length=None))
+            parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
     dataset.extract.write_blob(
         file_buffer=parts,
         path_after_prefix=f"{get_updated_date()}/part.json",
