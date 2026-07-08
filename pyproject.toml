@@ -26,7 +26,6 @@ dependencies = [
     "faker (>=37.8.0)",
     "PyGithub (>=2.8.1)"
 ]
-
 [tool.setuptools.packages.find]
 namespaces = true
 include = ["cfa*"]

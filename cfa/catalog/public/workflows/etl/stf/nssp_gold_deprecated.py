@@ -6,7 +6,7 @@ import tqdm
 from cfa.cloudops.blob_helpers import read_blob_stream, walk_blobs_in_container
 from cfa.dataops import datacat
 
-dataset = datacat.public.stf.nssp_gold
+dataset = datacat.public.stf.nssp_gold_v1
 source_blob = SimpleNamespace(**dataset.config["source"]["storage_location"])
 
 

@@ -12,8 +12,6 @@
 name = "nssp_gold_v1"
 type = "experiment"
 
-############################################################################
-
 [source]
 
 storage_location.account = "cfaazurebatchprd"
