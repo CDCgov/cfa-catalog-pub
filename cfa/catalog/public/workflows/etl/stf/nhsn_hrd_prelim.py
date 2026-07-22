@@ -98,7 +98,9 @@ def get_columns(dataset_id: str) -> list[str]:
         response.raise_for_status()
         results = response.json()
     except (requests.exceptions.RequestException, ValueError) as e:
-        print(f"Warning: failed to fetch CDC view schema for {dataset_id}: {e}")
+        print(
+            f"Warning: failed to fetch CDC view schema for {dataset_id}: {e}"
+        )
         return []
 
     columns = results.get("columns", [])
