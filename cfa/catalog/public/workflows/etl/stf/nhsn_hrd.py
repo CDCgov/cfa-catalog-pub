@@ -90,18 +90,19 @@ def check_for_new_data() -> bool:
     return newest < get_updated_date()
 
 
-def get_columns(dataset_id):
+@lru_cache(maxsize=1)
+def get_columns(dataset_id: str) -> list[str]:
+    link = f"https://data.cdc.gov/api/views/{dataset_id}.json"
     try:
-        link = f"https://data.cdc.gov/api/views/{dataset_id}.json"
-        results = requests.get(link).json()
-        field_names = [
-            c.get("fieldName")
-            for c in results["columns"]
-            if c.get("fieldName") is not None
-        ]
-        return field_names
-    except Exception:
+        response = requests.get(link, timeout=10)
+        response.raise_for_status()
+        results = response.json()
+    except (requests.exceptions.RequestException, ValueError) as e:
+        print(f"Warning: failed to fetch CDC view schema for {dataset_id}: {e}")
         return []
+
+    columns = results.get("columns", [])
+    return [c.get("fieldName") for c in columns if c.get("fieldName")]
 
 
 def extract(
