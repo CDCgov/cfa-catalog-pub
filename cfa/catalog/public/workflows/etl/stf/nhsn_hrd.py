@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import re
-from functools import lru_cache
 from io import BytesIO, StringIO
 from typing import Optional
 
@@ -70,7 +69,6 @@ def etl_archive():
                     buffer.close()
 
 
-@lru_cache(maxsize=1)
 def get_updated_date() -> str:
     response = requests.get(
         f"https://data.cdc.gov/api/views/metadata/v1/{dataset_id}", timeout=10

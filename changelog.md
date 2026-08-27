@@ -7,6 +7,12 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.08.26.0]
+
+## Removed
+
+- removed the lru caching component for checking updated dates.
+
 # [2026.07.06.0]
 
 ## Added
