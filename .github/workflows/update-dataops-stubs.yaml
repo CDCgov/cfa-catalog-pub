@@ -34,10 +34,17 @@ jobs:
         id: before
         shell: bash
         run: |
+          set -euo pipefail
+
           dataops_source=$(sed -n \
             '/^name = "cfa-dataops"$/,/^\[\[/p' uv.lock \
             | grep '^source = { git' \
-            | head -1)
+            | head -1 || true)
+
+          if [ -z "$dataops_source" ]; then
+            echo "Unable to locate cfa-dataops git source in uv.lock."
+            exit 1
+          fi
 
           echo "source=$dataops_source" >> "$GITHUB_OUTPUT"
           echo "Current cfa-dataops source: $dataops_source"
@@ -49,10 +56,17 @@ jobs:
         id: update
         shell: bash
         run: |
+          set -euo pipefail
+
           dataops_source=$(sed -n \
             '/^name = "cfa-dataops"$/,/^\[\[/p' uv.lock \
             | grep '^source = { git' \
-            | head -1)
+            | head -1 || true)
+
+          if [ -z "$dataops_source" ]; then
+            echo "Unable to locate cfa-dataops git source in uv.lock."
+            exit 1
+          fi
 
           echo "source=$dataops_source" >> "$GITHUB_OUTPUT"
           echo "Updated cfa-dataops source: $dataops_source"
@@ -106,6 +120,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           branch="automation/update-cfa-dataops-stubs"
+
+          git fetch origin "$branch" || true
 
           git checkout -B "$branch"
           git add uv.lock typings/cfa/dataops/__init__.pyi typings/cfa/dataops/catalog.pyi
