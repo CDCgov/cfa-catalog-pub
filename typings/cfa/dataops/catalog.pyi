@@ -5,27 +5,30 @@ from typing import Any, Literal, overload
 import pandas as pd
 import polars as pl
 
-from .reporting.catalog import NotebookEndpoint
-
-def get_all_catalogs() -> list[tuple[str, str, str]]: ...
+def get_all_catalogs() -> list: ...
 
 class CatalogNamespace(SimpleNamespace):
-    pass
+    def get_ref(self, name: str, *, allow_suffix: bool = True) -> Any: ...
+
+class VersionMetadata:
+    version: str | None
+    blob_url: str | None
+    version_spec: str | None
+    selection: Literal["newest", "oldest"]
 
 class DatasetEndpoint:
     config_path: str
     defaults: dict[str, Any]
     config: dict[str, Any]
     __ns_str__: str
-    _ledger_location: dict[str, Any]
 
 class BlobEndpoint:
     account: str
     container: str
     prefix: str
-    ledger_location: dict[str, Any]
-    is_ledger: bool
     __ns_str__: str
+    def check_blob_access(self) -> tuple[bool, str]: ...
+    def verify_blob_access(self) -> None: ...
     def write_blob(
         self,
         file_buffer: bytes | Sequence[bytes],
@@ -36,22 +39,21 @@ class BlobEndpoint:
     def read_blobs(
         self,
         version_spec: str | None = None,
-        selection: Literal["newest", "oldest", "all"] = "newest",
+        selection: Literal["newest", "oldest"] = "newest",
         print_version: bool = True,
     ) -> list[bytes]: ...
     def read_csv(self, suffix: str) -> pd.DataFrame: ...
-    def get_versions(self) -> list[str]: ...
+    def get_versions(self) -> list: ...
     def get_file_ext(
         self,
-        version_spec: str | None = None,
-        selection: Literal["newest", "oldest", "all"] = "newest",
+        version_meta: VersionMetadata,
     ) -> str: ...
     def download_version_to_local(
         self,
         local_path: str,
         version_spec: str | None = None,
         force: bool = False,
-        selection: Literal["newest", "oldest", "all"] = "newest",
+        selection: Literal["newest", "oldest"] = "newest",
     ) -> bool: ...
     @overload
     def get_dataframe(
@@ -59,6 +61,7 @@ class BlobEndpoint:
         output: Literal["pandas", "pd"] = "pandas",
         version_spec: str | None = None,
         selection: Literal["newest", "oldest"] = "newest",
+        print_version: bool = False,
     ) -> pd.DataFrame: ...
     @overload
     def get_dataframe(
@@ -66,6 +69,7 @@ class BlobEndpoint:
         output: Literal["polars", "pl"],
         version_spec: str | None = None,
         selection: Literal["newest", "oldest"] = "newest",
+        print_version: bool = False,
     ) -> pl.DataFrame: ...
     @overload
     def get_dataframe(
@@ -73,8 +77,13 @@ class BlobEndpoint:
         output: Literal["pl_lazy", "lazy"],
         version_spec: str | None = None,
         selection: Literal["newest", "oldest"] = "newest",
+        print_version: bool = False,
     ) -> pl.LazyFrame: ...
-    def ledger_entry(self, action: str) -> None: ...
+    def resolve_version(
+        self,
+        version_spec: str | None = None,
+        selection: Literal["newest", "oldest"] = "newest",
+    ) -> VersionMetadata: ...
     def save_dataframe(
         self,
         df: pd.DataFrame | pl.DataFrame,
@@ -156,24 +165,9 @@ class _DataCatalogPublicStfNamespace(CatalogNamespace):
 class _DataCatalogPublicNamespace(CatalogNamespace):
     reference: _DataCatalogPublicReferenceNamespace
     stf: _DataCatalogPublicStfNamespace
-    _ledger_endpoint: BlobEndpoint
 
 class DataCatalog(CatalogNamespace):
     public: _DataCatalogPublicNamespace
     __namespace_list__: list[str]
 
-class _ReportCatalogPublicExamplesBasicsIpynbReport(NotebookEndpoint):
-    pass
-
-class _ReportCatalogPublicExamplesNamespace(CatalogNamespace):
-    basics_ipynb: _ReportCatalogPublicExamplesBasicsIpynbReport
-
-class _ReportCatalogPublicNamespace(CatalogNamespace):
-    examples: _ReportCatalogPublicExamplesNamespace
-
-class ReportCatalog(CatalogNamespace):
-    public: _ReportCatalogPublicNamespace
-    __namespace_list__: list[str]
-
 datacat: DataCatalog
-reportcat: ReportCatalog
