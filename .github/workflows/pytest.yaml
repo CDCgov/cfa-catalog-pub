@@ -20,7 +20,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Sync environment
-        run: uv sync --extra dev
+        run: uv sync
 
       - name: Run tests
         run: uv run pytest
