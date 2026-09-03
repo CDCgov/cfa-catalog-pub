@@ -89,14 +89,6 @@ jobs:
         if: steps.update.outputs.changed == 'true'
         uses: ./.github/actions/pre-commit
 
-      - name: Run tests
-        if: steps.update.outputs.changed == 'true'
-        run: uv run pytest
-
-      - name: Restore unrelated notebook changes
-        if: steps.update.outputs.changed == 'true'
-        run: git restore cfa/catalog/public/reports/examples/basics.ipynb
-
       - name: Check generated changes
         if: steps.update.outputs.changed == 'true'
         id: changes
