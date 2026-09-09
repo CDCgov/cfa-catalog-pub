@@ -402,7 +402,7 @@ wheels = [
 
 [[package]]
 name = "cfa-catalog-public"
-version = "2026.8.26.0"
+version = "2026.9.8.0"
 source = { editable = "." }
 dependencies = [
     { name = "cfa-dataops" },
