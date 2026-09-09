@@ -7,6 +7,19 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.09.08.0]
+
+## Added
+
+- automated `cfa-dataops` type stub regeneration when the upstream dependency revision changes
+- added a pull-request pytest workflow for repository-wide test validation
+- added and tracked `uv.lock` for reproducible `cfa-dataops` dependency resolution
+
+## Changed
+
+- moved test dependencies to the `dev` dependency group
+- updated generated `cfa.dataops` type stubs to match the current upstream revision
+
 # [2026.08.26.0]
 
 ## Removed

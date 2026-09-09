@@ -1,0 +1,137 @@
+name: Update cfa-dataops stubs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-cfa-dataops-stubs
+  cancel-in-progress: false
+
+jobs:
+  update-dataops-stubs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.10"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+
+
+      - name: Capture current cfa-dataops revision
+        id: before
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          dataops_source=$(sed -n \
+            '/^name = "cfa-dataops"$/,/^\[\[/p' uv.lock \
+            | grep '^source = { git' \
+            | head -1 || true)
+
+          if [ -z "$dataops_source" ]; then
+            echo "Unable to locate cfa-dataops git source in uv.lock."
+            exit 1
+          fi
+
+          echo "source=$dataops_source" >> "$GITHUB_OUTPUT"
+          echo "Current cfa-dataops source: $dataops_source"
+
+      - name: Update cfa-dataops lock
+        run: uv lock --upgrade-package cfa-dataops
+
+      - name: Detect cfa-dataops update
+        id: update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          dataops_source=$(sed -n \
+            '/^name = "cfa-dataops"$/,/^\[\[/p' uv.lock \
+            | grep '^source = { git' \
+            | head -1 || true)
+
+          if [ -z "$dataops_source" ]; then
+            echo "Unable to locate cfa-dataops git source in uv.lock."
+            exit 1
+          fi
+
+          echo "source=$dataops_source" >> "$GITHUB_OUTPUT"
+          echo "Updated cfa-dataops source: $dataops_source"
+
+          if [ "${{ steps.before.outputs.source }}" = "$dataops_source" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "cfa-dataops has not changed."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "cfa-dataops has changed."
+          fi
+
+      - name: Sync environment
+        if: steps.update.outputs.changed == 'true'
+        run: uv sync
+
+      - name: Regenerate cfa-dataops stubs
+        if: steps.update.outputs.changed == 'true'
+        run: uv run dataops_catalog_stubs
+
+      - name: Run pre-commit
+        if: steps.update.outputs.changed == 'true'
+        uses: ./.github/actions/pre-commit
+
+      - name: Check generated changes
+        if: steps.update.outputs.changed == 'true'
+        id: changes
+        shell: bash
+        run: |
+          if git diff --quiet -- uv.lock typings/cfa/dataops; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No generated changes to commit."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat
+          fi
+
+      - name: Create update branch
+        if: steps.changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          branch="automation/update-cfa-dataops-stubs"
+
+          git fetch origin "$branch" || true
+
+          git checkout -B "$branch"
+          git add uv.lock typings/cfa/dataops/__init__.pyi typings/cfa/dataops/catalog.pyi
+          git commit -m "Update cfa-dataops stubs"
+          git push --force-with-lease origin "$branch"
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          branch="automation/update-cfa-dataops-stubs"
+
+          if gh pr view "$branch" >/dev/null 2>&1; then
+            echo "Existing pull request updated."
+          else
+            gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "Update cfa-dataops stubs" \
+              --body "Automated update of the cfa-dataops lock revision and generated type stubs."
+          fi
