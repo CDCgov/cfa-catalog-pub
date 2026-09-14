@@ -162,7 +162,6 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
                 f"week_end left unchanged. Error converting week_end to datetime: {e}; {ex}"
             )
             data_t = data
-            
     #convert buildnumber to date
     try:
         data_t = data_t.with_columns(
