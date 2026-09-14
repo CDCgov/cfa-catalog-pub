@@ -231,7 +231,7 @@ def etl() -> None:
     Execute the ETL process: extract, transform, and load.
     """
     parser = argparse.ArgumentParser(
-        description="ETL process for NHSN HRD data"
+        description="ETL process for NSSP ED data"
     )
     parser.add_argument(
         "--app-token",
