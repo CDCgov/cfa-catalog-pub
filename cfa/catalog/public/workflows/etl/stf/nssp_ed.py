@@ -39,7 +39,9 @@ def etl_archive():
         commits_by_date.setdefault(date, c.sha)
 
     new_dates = sorted(
-        date for date in commits_by_date if date not in current_extracted_versions
+        date
+        for date in commits_by_date
+        if date not in current_extracted_versions
     )
     if not new_dates:
         print("No new versions found in archive.")
@@ -51,7 +53,9 @@ def etl_archive():
         file = repo.get_contents(file_path, ref=sha)
         raw_url = file.download_url
         if not raw_url:
-            raise RuntimeError(f"No download URL found for {file_path} at {sha}")
+            raise RuntimeError(
+                f"No download URL found for {file_path} at {sha}"
+            )
 
         print(f"Downloading and loading {nd} sha {sha} from archive...")
         response = requests.get(raw_url, timeout=60)
@@ -78,7 +82,6 @@ def etl_archive():
             auto_version=False,
         )
         print("File downloaded successfully.")
-
 
 
 def get_updated_date() -> str:
@@ -133,6 +136,7 @@ def extract(
 
     return data
 
+
 def transform(data: pl.DataFrame) -> pl.DataFrame:
     """
     Transform the raw data into the desired format.
@@ -146,9 +150,7 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
     # Convert week_end to datetime[ms]
     try:
         data_t = data.with_columns(
-            pl.col("week_end").str.to_date(
-                format="%Y-%m-%dT%H:%M:%S.000"
-            )
+            pl.col("week_end").str.to_date(format="%Y-%m-%dT%H:%M:%S.000")
         )
     except Exception as e:
         try:
@@ -161,35 +163,33 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
                 f"week_end left unchanged. Error converting week_end to datetime: {e}; {ex}"
             )
             data_t = data
-    #convert buildnumber to date
+    # convert buildnumber to date
     try:
         data_t = data_t.with_columns(
-            pl.col("buildnumber").str.to_date(
-                format="%Y-%m-%dT%H:%M:%S.000"
-            )
+            pl.col("buildnumber").str.to_date(format="%Y-%m-%d")
         )
     except Exception as e:
         try:
-            # try alternative format
+            # try alternative column name
             data_t = data_t.with_columns(
-                pl.col("buildnumber").str.to_date(format="%Y-%m-%d")
+                pl.col("BuildNumber").str.to_date(format="%Y-%m-%d")
             )
+            # rename column to buildnumber
+            data_t = data_t.rename({"BuildNumber": "buildnumber"})
         except Exception as ex:
             print(
                 f"buildnumber left unchanged. Error converting buildnumber to datetime: {e}; {ex}"
             )
-    
+
     try:
         # Convert all columns starting with percent to float
         cols = [col for col in data_t.columns if col.startswith("percent")]
         data_t = data_t.with_columns(
-            pl.col(cols).cast(
-                pl.Float64, strict=False
-            )
+            pl.col(cols).cast(pl.Float64, strict=False)
         )
     except Exception as e:
         print(f"Error converting columns to Float64: {e}")
-    
+
     return data_t
 
 
