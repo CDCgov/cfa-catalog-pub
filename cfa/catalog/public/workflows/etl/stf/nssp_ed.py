@@ -109,8 +109,7 @@ def extract(
         app_token (Optional[str]): Application token for accessing the CDC API
 
     Returns:
-        pl.DataFrame: Polars DataFrame containing the requested data, plus a
-            `date` column that is the Sunday that starts each week
+        pl.DataFrame: Polars DataFrame containing the requested data
     """
 
     q = Query(
