@@ -96,8 +96,8 @@ def get_updated_date() -> str:
 
 
 def check_for_new_data() -> bool:
-    newest = dataset.extract.get_versions()[0]
-    return newest < get_updated_date()
+    versions = dataset.extract.get_versions()
+    return not versions or versions[0] < get_updated_date()
 
 
 def extract(
