@@ -108,7 +108,7 @@ def extract(
     )
     dfs = []
     parts = []
-    for i in q.get_pages(page_size=100000):
+    for i in q.get_pages():
         dfs.append(pl.from_dicts(i, infer_schema_length=None))
         parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
     updated_date = get_updated_date()
