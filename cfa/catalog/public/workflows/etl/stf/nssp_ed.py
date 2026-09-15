@@ -165,7 +165,7 @@ def extract(
         domain=dataset.config["source"]["domain"],
         id=dataset.config["source"]["id"],
         app_token=app_token,
-        limit=10000,
+        limit=100000,
     )
     dfs = []
     parts = []
