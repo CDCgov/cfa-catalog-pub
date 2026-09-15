@@ -186,7 +186,7 @@ def extract(
                 parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
             break
         except (
-            httpx.TimeoutException,
+            httpx.RequestError,
             requests.exceptions.RequestException,
             TimeoutError,
         ) as exc:
