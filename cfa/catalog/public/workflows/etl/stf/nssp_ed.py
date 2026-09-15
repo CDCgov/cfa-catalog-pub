@@ -16,7 +16,7 @@ dataset = datacat.public.stf.nssp_ed
 dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
 
-MAX_PAGE_RETRIES = 5
+MAX_PAGE_RETRIES = 10
 RETRY_BACKOFF_SECONDS = 5
 
 
@@ -182,7 +182,11 @@ def extract(
                 dfs.append(pl.from_dicts(i, infer_schema_length=None))
                 parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
             break
-        except (requests.exceptions.RequestException, TimeoutError) as exc:
+        except (
+            requests.exceptions.RequestException,
+            TimeoutError,
+            requests.exceptions.ConnectTimeout,
+        ) as exc:
             if attempt == MAX_PAGE_RETRIES - 1:
                 raise
             delay = RETRY_BACKOFF_SECONDS * (2**attempt)
