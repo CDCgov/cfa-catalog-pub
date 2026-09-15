@@ -54,6 +54,8 @@ def filter_api_cols(data: pl.DataFrame) -> pl.DataFrame:
         "percent_visits_smoothed_rsv",
     ]
 
+    if "buildnumber" not in data.columns and "BuildNumber" in data.columns:
+        data = data.rename({"BuildNumber": "buildnumber"})
     result = data.with_columns(
         [
             pl.lit(None).alias(col)
