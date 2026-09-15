@@ -218,38 +218,47 @@ def transform(data: pl.DataFrame) -> pl.DataFrame:
     Returns:
         pl.DataFrame: Transformed data
     """
-    # Convert week_end to datetime[ms]
-    try:
-        data_t = data.with_columns(
-            pl.col("week_end").str.to_date(format="%Y-%m-%dT%H:%M:%S.000")
-        )
-    except Exception as e:
+    data_t = data
+
+    # Parse date strings, but leave Date/Datetime and Null columns unchanged.
+    if data_t.schema.get("week_end") == pl.String:
         try:
-            # try alternative format
-            data_t = data.with_columns(
-                pl.col("week_end").str.to_date(format="%Y-%m-%d")
-            )
-        except Exception as ex:
-            print(
-                f"week_end left unchanged. Error converting week_end to datetime: {e}; {ex}"
-            )
-            data_t = data
-    # convert buildnumber to date
-    try:
-        data_t = data_t.with_columns(
-            pl.col("buildnumber").str.to_date(format="%Y-%m-%d")
-        )
-    except Exception as e:
-        try:
-            # try alternative column name
             data_t = data_t.with_columns(
-                pl.col("BuildNumber").str.to_date(format="%Y-%m-%d")
+                pl.col("week_end").str.to_date(format="%Y-%m-%dT%H:%M:%S.000")
             )
-            # rename column to buildnumber
-            data_t = data_t.rename({"BuildNumber": "buildnumber"})
-        except Exception as ex:
+        except Exception as e:
+            try:
+                data_t = data_t.with_columns(
+                    pl.col("week_end").str.to_date(format="%Y-%m-%d")
+                )
+            except Exception as ex:
+                print(
+                    "week_end left unchanged. Error converting week_end "
+                    f"to datetime: {e}; {ex}"
+                )
+
+    buildnumber_col = next(
+        (
+            col
+            for col in ("buildnumber", "BuildNumber")
+            if col in data_t.columns
+        ),
+        None,
+    )
+    if (
+        buildnumber_col is not None
+        and data_t.schema[buildnumber_col] == pl.String
+    ):
+        try:
+            data_t = data_t.with_columns(
+                pl.col(buildnumber_col).str.to_date(format="%Y-%m-%d")
+            )
+            if buildnumber_col == "BuildNumber":
+                data_t = data_t.rename({"BuildNumber": "buildnumber"})
+        except Exception as e:
             print(
-                f"buildnumber left unchanged. Error converting buildnumber to datetime: {e}; {ex}"
+                "buildnumber left unchanged. Error converting buildnumber "
+                f"to datetime: {e}"
             )
 
     try:
