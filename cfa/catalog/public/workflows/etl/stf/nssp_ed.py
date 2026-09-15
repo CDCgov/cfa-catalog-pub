@@ -5,6 +5,7 @@ import time
 from io import BytesIO
 from typing import Optional
 
+import httpx
 import polars as pl
 import requests
 from github import Github
@@ -183,9 +184,9 @@ def extract(
                 parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
             break
         except (
+            httpx.TimeoutException,
             requests.exceptions.RequestException,
             TimeoutError,
-            requests.exceptions.ConnectTimeout,
         ) as exc:
             if attempt == MAX_PAGE_RETRIES - 1:
                 raise
