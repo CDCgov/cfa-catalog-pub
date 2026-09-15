@@ -54,6 +54,8 @@ def filter_api_cols(data: pl.DataFrame) -> pl.DataFrame:
         "percent_visits_smoothed_rsv",
     ]
 
+    if "buildnumber" not in data.columns and "BuildNumber" in data.columns:
+        data = data.rename({"BuildNumber": "buildnumber"})
     result = data.with_columns(
         [
             pl.lit(None).alias(col)
@@ -184,7 +186,7 @@ def extract(
                 parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
             break
         except (
-            httpx.TimeoutException,
+            httpx.RequestError,
             requests.exceptions.RequestException,
             TimeoutError,
         ) as exc:
