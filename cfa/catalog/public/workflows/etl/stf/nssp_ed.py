@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import time
 from io import BytesIO
 from typing import Optional
 
@@ -14,6 +15,9 @@ from cfa.dataops.soda import Query
 dataset = datacat.public.stf.nssp_ed
 dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
+
+MAX_PAGE_RETRIES = 5
+RETRY_BACKOFF_SECONDS = 5
 
 
 def filter_api_cols(data: pl.DataFrame) -> pl.DataFrame:
@@ -161,17 +165,32 @@ def extract(
         pl.DataFrame: Polars DataFrame containing the requested data
     """
 
-    q = Query(
-        domain=dataset.config["source"]["domain"],
-        id=dataset.config["source"]["id"],
-        app_token=app_token,
-        limit=100000,
-    )
     dfs = []
     parts = []
-    for i in q.get_pages():
-        dfs.append(pl.from_dicts(i, infer_schema_length=None))
-        parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
+    for attempt in range(MAX_PAGE_RETRIES):
+        try:
+            # Recreate the iterator for each attempt so a failure after some
+            # pages have been returned restarts the complete query.
+            q = Query(
+                domain=dataset.config["source"]["domain"],
+                id=dataset.config["source"]["id"],
+                app_token=app_token,
+            )
+            dfs = []
+            parts = []
+            for i in q.get_pages():
+                dfs.append(pl.from_dicts(i, infer_schema_length=None))
+                parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
+            break
+        except (requests.exceptions.RequestException, TimeoutError) as exc:
+            if attempt == MAX_PAGE_RETRIES - 1:
+                raise
+            delay = RETRY_BACKOFF_SECONDS * (2**attempt)
+            print(
+                f"SODA page request failed ({exc}); retrying in {delay} "
+                f"seconds for attempt ({attempt + 1}/{MAX_PAGE_RETRIES})..."
+            )
+            time.sleep(delay)
     updated_date = get_updated_date()
     dataset.extract.write_blob(
         file_buffer=parts,
