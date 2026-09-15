@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+import time
 from io import BytesIO, StringIO
 from typing import Optional
 
@@ -16,6 +17,9 @@ from cfa.dataops.soda import Query
 dataset = datacat.public.stf.nhsn_hrd_prelim
 dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
+
+MAX_PAGE_RETRIES = 5
+RETRY_BACKOFF_SECONDS = 5
 
 
 def etl_archive():
@@ -101,16 +105,34 @@ def extract(
             `date` column that is the Sunday that starts each week
     """
 
-    q = Query(
-        domain=dataset.config["source"]["domain"],
-        id=dataset.config["source"]["id"],
-        app_token=app_token,
-    )
     dfs = []
     parts = []
-    for i in q.get_pages():
-        dfs.append(pl.from_dicts(i, infer_schema_length=None))
-        parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
+    # this should help solve the connection timeout we see occasionally
+    for attempt in range(MAX_PAGE_RETRIES):
+        try:
+            # Recreate the iterator for each attempt. If a request fails after
+            # some pages have been returned, retrying the same iterator would
+            # not reliably restart from the failed page.
+            q = Query(
+                domain=dataset.config["source"]["domain"],
+                id=dataset.config["source"]["id"],
+                app_token=app_token,
+            )
+            dfs = []
+            parts = []
+            for i in q.get_pages():
+                dfs.append(pl.from_dicts(i, infer_schema_length=None))
+                parts.append(bytes(json.dumps(i, indent=2), "utf-8"))
+            break
+        except (requests.exceptions.RequestException, TimeoutError) as exc:
+            if attempt == MAX_PAGE_RETRIES - 1:
+                raise
+            delay = RETRY_BACKOFF_SECONDS * (2**attempt)
+            print(
+                f"SODA page request failed ({exc}); retrying in {delay} "
+                f"seconds attempt ({attempt + 1}/{MAX_PAGE_RETRIES})..."
+            )
+            time.sleep(delay)
     updated_date = get_updated_date()
     dataset.extract.write_blob(
         file_buffer=parts,
