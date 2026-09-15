@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 from io import BytesIO
-from pathlib import Path
 from typing import Optional
 
 import polars as pl
@@ -15,6 +14,50 @@ from cfa.dataops.soda import Query
 dataset = datacat.public.stf.nssp_ed
 dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
+
+
+def filter_api_cols(data: pl.DataFrame) -> pl.DataFrame:
+    """
+    Filter the DataFrame to only include columns that are present in the API response.
+
+    Args:
+        data (pl.DataFrame): The DataFrame to filter.
+
+    Returns:
+        pl.DataFrame: The filtered DataFrame containing only the API columns.
+    """
+    api_cols = [
+        "week_end",
+        "geography",
+        "county",
+        "ed_trends_covid",
+        "ed_trends_influenza",
+        "ed_trends_rsv",
+        "hsa",
+        "hsa_counties",
+        "hsa_nci_id",
+        "fips",
+        "trend_source",
+        "buildnumber",
+        "percent_visits_combined",
+        "percent_visits_covid",
+        "percent_visits_influenza",
+        "percent_visits_rsv",
+        "percent_visits_smoothed",
+        "percent_visits_smoothed_covid",
+        "percent_visits_smoothed_1",
+        "percent_visits_smoothed_rsv",
+    ]
+
+    result = data.with_columns(
+        [
+            pl.lit(None).alias(col)
+            for col in api_cols
+            if col not in data.columns
+        ]
+    ).select(api_cols)
+
+    return result
 
 
 def etl_archive():
@@ -38,6 +81,7 @@ def etl_archive():
         date = c.commit.author.date.strftime("%Y-%m-%d")
         commits_by_date.setdefault(date, c.sha)
 
+    # get ordered dates that are not already extracted. If none, exit early.
     new_dates = sorted(
         date
         for date in commits_by_date
@@ -47,7 +91,7 @@ def etl_archive():
         print("No new versions found in archive.")
         return
 
-    archive_filename = Path(file_path).name
+    # Download and load each new version. The extract version is the resume marker, so write it only after load succeeds.
     for nd in new_dates:
         sha = commits_by_date[nd]
         file = repo.get_contents(file_path, ref=sha)
@@ -64,7 +108,9 @@ def etl_archive():
 
         # Validate and transform before writing either output. The extract
         # version is the resume marker, so write it only after load succeeds.
-        df_t = transform(pl.read_parquet(BytesIO(data)))
+        # format columns matching data.cdc.gov API
+        data_api = filter_api_cols(data=pl.read_parquet(BytesIO(data)))
+        df_t = transform(data_api)
         buffer = BytesIO()
         try:
             df_t.write_parquet(buffer)
@@ -78,7 +124,7 @@ def etl_archive():
 
         dataset.extract.write_blob(
             file_buffer=data,
-            path_after_prefix=f"{nd}/{archive_filename}",
+            path_after_prefix=f"{nd}/data.parquet",
             auto_version=False,
         )
         print("File downloaded successfully.")
