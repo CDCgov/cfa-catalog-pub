@@ -152,7 +152,7 @@ def get_updated_date() -> str:
 
 
 def check_for_new_data() -> bool:
-    versions = dataset.extract.get_versions()
+    versions = dataset.load.get_versions()
     return not versions or versions[0] < get_updated_date()
 
 
