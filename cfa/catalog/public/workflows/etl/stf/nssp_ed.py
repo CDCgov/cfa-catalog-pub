@@ -335,7 +335,7 @@ def etl() -> None:
     args = parser.parse_args()
     if args.skip_extract:
         raw_data = dataset.extract.get_dataframe(
-            output="pl", version=args.use_version
+            output="pl", version_spec=args.use_version
         )
     else:
         raw_data = extract(app_token=args.app_token)
