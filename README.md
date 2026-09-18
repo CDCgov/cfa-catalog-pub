@@ -31,6 +31,7 @@ The catalog is built on the `cfa-dataops` framework and provides:
   - `comprehensive_nssp_gold`
   - `nhsn_hrd_prelim`
   - `nhsn_hrd`
+  - `nssp_ed`
   - `nssp_gold_v1`
   - `nssp_gold_v2`
   - `nwss`

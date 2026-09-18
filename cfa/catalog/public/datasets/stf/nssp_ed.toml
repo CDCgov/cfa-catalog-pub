@@ -1,0 +1,56 @@
+# This dataset config is for weekly pulls of the NSSP Emergency Department
+# Visit Trajectories by State and Sub State Regions- COVID-19, Flu, RSV, Combined
+# from data.cdc.gov.
+
+############################################################################
+
+[properties]
+# The name field is the only required field here. Though other
+# files can be accessed in the datacat by key/name.
+
+name = "nssp_ed"
+automate = false
+transform_templates = ["{location for any sql applied to reference data}"]
+# schemas = "{path file containing any dataframe schema definitions}"
+type = "etl"
+
+############################################################################
+
+[source]
+# These source fields are open to being changed based on the source type
+# and api requirements. This example uses a Socrata data source
+# which is common for CDC data sources.
+
+domain = "data.cdc.gov"
+id = "rdmq-nq56"
+limit = 10000
+archive.repo = "CDCgov/covid19-forecast-hub"
+archive.path = "auxiliary-data/nssp-raw-data/latest.parquet"
+
+############################################################################
+
+[extract]
+# These are the details of where to store the raw extracted data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/stf/raw/nssp_ed"
+
+############################################################################
+
+[load]
+# These are the details of where to store the transformed and loaded data.
+# If not included or given an empty string, the defaults in the
+# catalog_defaults.toml will be used
+
+account = ""
+container = ""
+prefix = "dataops/stf/transformed/nssp_ed"
+
+############################################################################
+
+# Changelog
+# ---------
+# 2026-09-14: Initial version created by Ryan Raasch (xng3)
