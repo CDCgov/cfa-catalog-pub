@@ -491,7 +491,7 @@ dependencies = [
 [[package]]
 name = "cfa-dataops"
 version = "2026.8.28.0"
-source = { git = "https://github.com/CDCgov/cfa-dataops.git?rev=main#2ff3c2f22fb9a7d02d83e6be1be9395b783480b4" }
+source = { git = "https://github.com/CDCgov/cfa-dataops.git?rev=main#ba8d93815939e40ba996ebd0757706b2086c4e23" }
 dependencies = [
     { name = "azure-identity" },
     { name = "azure-storage-blob" },
