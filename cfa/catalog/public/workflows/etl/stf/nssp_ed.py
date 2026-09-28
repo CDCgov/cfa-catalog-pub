@@ -127,14 +127,18 @@ def etl_archive():
         # version is the resume marker, so write it only after load succeeds.
         # format columns matching data.cdc.gov API
         try:
-            data_api = filter_api_cols(data=pl.read_parquet(BytesIO(data)))
+            data_api = filter_api_cols(
+                data=pl.read_parquet(BytesIO(data), infer_schema_length=None)
+            )
             dataset.extract.write_blob(
                 file_buffer=data,
                 path_after_prefix=f"{nd}/data.parquet",
                 auto_version=False,
             )
         except Exception:
-            data_api = filter_api_cols(data=pl.read_csv(BytesIO(data)))
+            data_api = filter_api_cols(
+                data=pl.read_csv(BytesIO(data), infer_schema_length=None)
+            )
             dataset.extract.write_blob(
                 file_buffer=data,
                 path_after_prefix=f"{nd}/data.csv",
