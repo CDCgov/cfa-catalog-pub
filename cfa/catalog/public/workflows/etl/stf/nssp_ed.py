@@ -126,7 +126,20 @@ def etl_archive():
         # Validate and transform before writing either output. The extract
         # version is the resume marker, so write it only after load succeeds.
         # format columns matching data.cdc.gov API
-        data_api = filter_api_cols(data=pl.read_parquet(BytesIO(data)))
+        try:
+            data_api = filter_api_cols(data=pl.read_parquet(BytesIO(data)))
+            dataset.extract.write_blob(
+                file_buffer=data,
+                path_after_prefix=f"{nd}/data.parquet",
+                auto_version=False,
+            )
+        except Exception:
+            data_api = filter_api_cols(data=pl.read_csv(BytesIO(data)))
+            dataset.extract.write_blob(
+                file_buffer=data,
+                path_after_prefix=f"{nd}/data.csv",
+                auto_version=False,
+            )
         df_t = transform(data_api)
         buffer = BytesIO()
         try:
@@ -138,12 +151,6 @@ def etl_archive():
             )
         finally:
             buffer.close()
-
-        dataset.extract.write_blob(
-            file_buffer=data,
-            path_after_prefix=f"{nd}/data.parquet",
-            auto_version=False,
-        )
         print("File downloaded successfully.")
 
 
