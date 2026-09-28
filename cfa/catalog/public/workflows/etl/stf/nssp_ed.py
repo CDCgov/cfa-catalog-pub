@@ -75,16 +75,21 @@ def etl_archive():
     g = Github()
 
     repo_name = dataset.config["source"]["archive"]["repo"]
-    file_path = dataset.config["source"]["archive"]["path"]
+    file_path_pq = "auxiliary-data/nssp-raw-data/latest.parquet"
+    file_path_csv = "auxiliary-data/nssp-raw-data/latest.csv"
     current_extracted_versions = set(dataset.extract.get_versions())
 
     repo = g.get_repo(repo_name)
-    commits = repo.get_commits(path=file_path)
+    commits_pq = repo.get_commits(path=file_path_pq)
+    commits_csv = repo.get_commits(path=file_path_csv)
 
     # GitHub returns commits newest first. Keep the newest snapshot for each
     # date because versions are stored by date, not commit SHA.
     commits_by_date = {}
-    for c in commits:
+    for c in commits_pq:
+        date = c.commit.author.date.strftime("%Y-%m-%d")
+        commits_by_date.setdefault(date, c.sha)
+    for c in commits_csv:
         date = c.commit.author.date.strftime("%Y-%m-%d")
         commits_by_date.setdefault(date, c.sha)
 
@@ -101,7 +106,12 @@ def etl_archive():
     # Download and load each new version. The extract version is the resume marker, so write it only after load succeeds.
     for nd in new_dates:
         sha = commits_by_date[nd]
-        file = repo.get_contents(file_path, ref=sha)
+        try:
+            file_path = file_path_pq
+            file = repo.get_contents(file_path, ref=sha)
+        except Exception:
+            file_path = file_path_csv
+            file = repo.get_contents(file_path, ref=sha)
         raw_url = file.download_url
         if not raw_url:
             raise RuntimeError(
