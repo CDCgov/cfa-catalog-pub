@@ -136,7 +136,7 @@ class _DataCatalogPublicStfNhsnHrdPrelimDataset(DatasetEndpoint):
     extract: BlobEndpoint
     load: BlobEndpoint
 
-class _DataCatalogPublicStfNsspEdDataset(DatasetEndpoint):
+class _DataCatalogPublicStfNsspPublicDataset(DatasetEndpoint):
     config: dict[str, Any]
     extract: BlobEndpoint
     load: BlobEndpoint
@@ -162,7 +162,7 @@ class _DataCatalogPublicStfNamespace(CatalogNamespace):
     comprehensive_nssp_gold: _DataCatalogPublicStfComprehensiveNsspGoldDataset
     nhsn_hrd: _DataCatalogPublicStfNhsnHrdDataset
     nhsn_hrd_prelim: _DataCatalogPublicStfNhsnHrdPrelimDataset
-    nssp_ed: _DataCatalogPublicStfNsspEdDataset
+    nssp_public: _DataCatalogPublicStfNsspPublicDataset
     nssp_gold_v1: _DataCatalogPublicStfNsspGoldV1Dataset
     nssp_gold_v2: _DataCatalogPublicStfNsspGoldV2Dataset
     nwss: _DataCatalogPublicStfNwssDataset

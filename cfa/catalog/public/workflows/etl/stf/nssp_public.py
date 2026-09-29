@@ -13,7 +13,7 @@ from github import Github
 from cfa.dataops import datacat
 from cfa.dataops.soda import Query
 
-dataset = datacat.public.stf.nssp_ed
+dataset = datacat.public.stf.nssp_public
 dataset_id = dataset.config["source"]["id"]
 access_token = os.getenv("CDC_SODA_API_TOKEN")
 

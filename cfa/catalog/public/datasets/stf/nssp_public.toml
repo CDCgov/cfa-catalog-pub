@@ -8,7 +8,7 @@
 # The name field is the only required field here. Though other
 # files can be accessed in the datacat by key/name.
 
-name = "nssp_ed"
+name = "nssp_public"
 automate = false
 transform_templates = ["{location for any sql applied to reference data}"]
 # schemas = "{path file containing any dataframe schema definitions}"
@@ -36,7 +36,7 @@ archive.path = "auxiliary-data/nssp-raw-data/latest.parquet"
 
 account = ""
 container = ""
-prefix = "dataops/stf/raw/nssp_ed"
+prefix = "dataops/stf/raw/nssp_public"
 
 ############################################################################
 
@@ -47,7 +47,7 @@ prefix = "dataops/stf/raw/nssp_ed"
 
 account = ""
 container = ""
-prefix = "dataops/stf/transformed/nssp_ed"
+prefix = "dataops/stf/transformed/nssp_public"
 
 ############################################################################
 
