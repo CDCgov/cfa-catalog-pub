@@ -1,8 +1,8 @@
 from datetime import date, datetime
 from pathlib import Path
 
-import pandera.pandas as pa
 import pandas as pd
+import pandera.pandas as pa
 import polars as pl
 import pytest
 
