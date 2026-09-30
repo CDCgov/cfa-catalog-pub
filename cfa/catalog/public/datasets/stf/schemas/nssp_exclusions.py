@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Literal
 
 import pandas as pd
@@ -68,9 +68,10 @@ def _is_sorted_date_sequence(value: object) -> bool:
         values = list(value)  # type: ignore[arg-type]
     except TypeError:
         return False
-    return all(isinstance(item, date) for item in values) and values == sorted(
-        set(values)
-    )
+    return all(
+        isinstance(item, date) and not isinstance(item, datetime)
+        for item in values
+    ) and values == sorted(set(values))
 
 
 load_schema = pa.DataFrameSchema(
@@ -108,7 +109,20 @@ def load_mock_data(
             for index in range(size)
         ],
     }
-    pandas_df = pd.DataFrame(data)
-    return (
-        pandas_df if output in {"pandas", "pd"} else pl.from_pandas(pandas_df)
+    pandas_df = pd.DataFrame(data).astype(
+        {
+            "reference_date": object,
+            "state_abb": "string",
+            "excluded_dates": object,
+        }
+    )
+    if output in {"pandas", "pd"}:
+        return pandas_df
+    return pl.from_pandas(
+        pandas_df,
+        schema_overrides={
+            "reference_date": pl.Date,
+            "state_abb": pl.String,
+            "excluded_dates": pl.List(pl.Date),
+        },
     )
