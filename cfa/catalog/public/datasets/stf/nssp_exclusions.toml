@@ -1,0 +1,13 @@
+# Versioned snapshots of dates excluded during NSSP data review.
+
+[properties]
+
+name = "nssp_exclusions"
+type = "reference"
+
+[load]
+
+# Use the public catalog defaults (cfadatalakeprd/cfapredict).
+account = ""
+container = ""
+prefix = "dataops/stf/transformed/nssp_exclusions/"

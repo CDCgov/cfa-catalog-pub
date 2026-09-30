@@ -7,6 +7,13 @@ and this project adheres to [Calendar Versioning](https://calver.org/).
 The versioning pattern is `YYYY.MM.DD.micro
 
 ---
+# [2026.09.29.0]
+
+## Added
+
+- added the versioned `public.stf.nssp_exclusions` reference dataset
+- added schema validation and deterministic mock data for reviewed exclusions
+
 # [2026.09.08.0]
 
 ## Added
