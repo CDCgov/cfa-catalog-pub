@@ -34,6 +34,7 @@ The catalog is built on the `cfa-dataops` framework and provides:
   - `nssp_exclusions`
   - `nssp_gold_v1`
   - `nssp_gold_v2`
+  - `nssp_public`
   - `nwss`
   - `param_estimates`
 

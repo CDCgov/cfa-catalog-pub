@@ -148,6 +148,11 @@ class _DataCatalogPublicStfNsspGoldV2Dataset(DatasetEndpoint):
     config: dict[str, Any]
     load: BlobEndpoint
 
+class _DataCatalogPublicStfNsspPublicDataset(DatasetEndpoint):
+    config: dict[str, Any]
+    extract: BlobEndpoint
+    load: BlobEndpoint
+
 class _DataCatalogPublicStfNwssDataset(DatasetEndpoint):
     config: dict[str, Any]
     extract: BlobEndpoint
@@ -164,6 +169,7 @@ class _DataCatalogPublicStfNamespace(CatalogNamespace):
     nssp_exclusions: _DataCatalogPublicStfNsspExclusionsDataset
     nssp_gold_v1: _DataCatalogPublicStfNsspGoldV1Dataset
     nssp_gold_v2: _DataCatalogPublicStfNsspGoldV2Dataset
+    nssp_public: _DataCatalogPublicStfNsspPublicDataset
     nwss: _DataCatalogPublicStfNwssDataset
     param_estimates: _DataCatalogPublicStfParamEstimatesDataset
 
