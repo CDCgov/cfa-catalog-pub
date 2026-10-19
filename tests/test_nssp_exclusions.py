@@ -38,7 +38,7 @@ def test_polars_fixture_has_persisted_schema_after_parquet_round_trip(
 
     assert loaded.schema == pl.Schema(
         {
-            "reference_date": pl.Date,
+            "report_date": pl.Date,
             "state_abb": pl.String,
             "excluded_dates": pl.List(pl.Date),
         }

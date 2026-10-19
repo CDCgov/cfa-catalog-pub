@@ -76,14 +76,14 @@ def _is_sorted_date_sequence(value: object) -> bool:
 
 load_schema = pa.DataFrameSchema(
     {
-        "reference_date": pa.Column(pa.Date, coerce=True),
+        "report_date": pa.Column(pa.Date, coerce=True),
         "state_abb": pa.Column(str, pa.Check.isin(STATE_ABBS)),
         "excluded_dates": pa.Column(
             object,
             pa.Check(_is_sorted_date_sequence, element_wise=True),
         ),
     },
-    unique=["reference_date", "state_abb"],
+    unique=["report_date", "state_abb"],
     strict=True,
 )
 
@@ -100,18 +100,18 @@ def load_mock_data(
     if output not in {"pandas", "pd", "polars", "pl"}:
         raise ValueError("output must be 'pandas', 'pd', 'polars', or 'pl'")
 
-    reference_date = date(2026, 9, 29)
+    report_date = date(2026, 9, 29)
     data = {
-        "reference_date": [reference_date] * size,
+        "report_date": [report_date] * size,
         "state_abb": list(STATE_ABBS[:size]),
         "excluded_dates": [
-            [] if index == 0 else [reference_date - timedelta(days=1)]
+            [] if index == 0 else [report_date - timedelta(days=1)]
             for index in range(size)
         ],
     }
     pandas_df = pd.DataFrame(data).astype(
         {
-            "reference_date": object,
+            "report_date": object,
             "state_abb": "string",
             "excluded_dates": object,
         }
@@ -121,7 +121,7 @@ def load_mock_data(
     return pl.from_pandas(
         pandas_df,
         schema_overrides={
-            "reference_date": pl.Date,
+            "report_date": pl.Date,
             "state_abb": pl.String,
             "excluded_dates": pl.List(pl.Date),
         },
