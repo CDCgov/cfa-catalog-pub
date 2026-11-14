@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -491,7 +491,7 @@ dependencies = [
 [[package]]
 name = "cfa-dataops"
 version = "2026.8.28.0"
-source = { git = "https://github.com/CDCgov/cfa-dataops.git?rev=main#b283e3d40e95282c933d3423336e9a1f3ed3b6fe" }
+source = { git = "https://github.com/CDCgov/cfa-dataops.git?rev=main#ba546109bd9bfb9b9af6d6f6dcbbd35d81b8f1c1" }
 dependencies = [
     { name = "azure-identity" },
     { name = "azure-storage-blob" },
